@@ -33,7 +33,8 @@
 31. Host 中 Swagger 内容必须放到 `Zeye.RfidReader.Workbench.Host.Swagger`。
 32. Host 中端点相关内容必须放到对应端点目录。
 33. Host 中厂商相关内容必须放到 `Zeye.RfidReader.Workbench.Host.Vendors`。
-34. 跨层共享接口必须定义在 `Zeye.RfidReader.Workbench.Contracts/Abstractions` 的子目录下面；仅服务于 Avalonia UI 层的私有接口允许定义在 `Zeye.RfidReader.Workbench.Avalonia/Services` 的子目录下面。
+34. 跨层共享接口必须定义在 `Zeye.RfidReader.Workbench.Contracts/Abstractions` 的子目录下面。
+35. UI 私有接口允许定义在 `Zeye.RfidReader.Workbench.Avalonia/Services` 的子目录下面。
     - 跨层共享接口示例：`IRfidReaderSession`、`IRfidReaderDriverFactory`、`ILocalClock`
     - UI 私有接口示例：`IAppNavigationService`、`IDialogService`、`IToastNotificationService`、`IUiDispatcher`
     - 判断规则：
@@ -45,10 +46,10 @@
       6. Infrastructure 禁止引用 Avalonia
       7. Contracts 禁止引用 Avalonia
     - UI 私有接口不得迁移到 Contracts，跨层业务接口不得放在 Avalonia
-35. 所有静态工具类都必须定义在 `Zeye.RfidReader.Workbench.Contracts.Utilities` 目录或其子目录下面（强制，框架扩展入口类除外）。
-36. 禁止在热路径读写配置文件和数据库
-37. 每个配置项的注释都需要写明可填写的范围，枚举类型需要列出所有枚举项
-38. 单个日志文件大小上限为 10 MB；超过后必须触发轮转（NLog 文件目标必须配置 `archiveAboveSize="10485760"`）。
+36. 所有静态工具类都必须定义在 `Zeye.RfidReader.Workbench.Contracts.Utilities` 目录或其子目录下面（强制，框架扩展入口类除外）。
+37. 禁止在热路径读写配置文件和数据库
+38. 每个配置项的注释都需要写明可填写的范围，枚举类型需要列出所有枚举项
+39. 单个日志文件大小上限为 10 MB；超过后必须触发轮转（NLog 文件目标必须配置 `archiveAboveSize="10485760"`）。
 
 ## PR 交付门禁（必须全部满足）
 

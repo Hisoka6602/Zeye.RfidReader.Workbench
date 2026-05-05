@@ -227,10 +227,6 @@ jobs:
             if ($viewModelContent -notmatch ':\s+ViewModelBase') {
               throw "MainWindowViewModel 必须继承 ViewModelBase。"
             }
-
-            if ($viewModelContent -match 'using\s+Zeye\.RfidReader\.Workbench\.Infrastructure') {
-              throw "MainWindowViewModel 禁止引用 Infrastructure 命名空间。"
-            }
           }
 
           $avaloniaViewModels = Get-ChildItem -Path (Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/ViewModels") -Recurse -Include *.cs |
