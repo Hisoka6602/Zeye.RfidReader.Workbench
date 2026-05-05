@@ -272,6 +272,12 @@ Zeye.RfidReader.Workbench
 - Lottie 封装控件
 - Dashboard / ReaderMonitor / Settings / Logs 页面占位
 
+## 当前已实现能力
+
+- 已明确 UI 私有接口与跨层共享接口的边界。
+- 已通过 CI 防止 UI 私有接口被误迁移到 Contracts。
+- 已通过 CI 防止非 UI 层引用 Avalonia.Services / ViewModels / Views。
+
 ## 分层依赖关系
 
 ```text
@@ -303,6 +309,19 @@ Avalonia
 - `Avalonia -> 真实厂商 SDK / TCP / 串口 / 数据库 / 外部业务系统`
 - `Avalonia/ViewModels -> Infrastructure`
 
+## 接口放置规则
+
+1. 跨层共享接口必须放在 `Contracts/Abstractions`。
+2. UI 私有接口允许放在 `Avalonia/Services`。
+3. UI 私有接口包括：
+   - `IAppNavigationService`
+   - `IDialogService`
+   - `IToastNotificationService`
+   - `IUiDispatcher`
+4. 当前仅由 Avalonia 使用、但未来可能跨层共享的接口，也应优先放在 `Contracts/Abstractions`。
+5. UI 私有接口不得被 `Application`、`Infrastructure`、`Domain`、`Contracts` 引用。
+6. 跨层业务接口不得放在 `Avalonia`。
+
 ## 验收命令
 
 ```bash
@@ -313,14 +332,12 @@ dotnet test --configuration Release
 
 ## 本次更新内容
 
-- 完成 Avalonia Shell / 页面 / ViewModel / UI Service / UI Model 的标准结构整理。
-- 新增统一导航、对话框、Toast 通知与 UI 线程调度抽象。
-- 将 `RfidLottieView` 改为基于 `StyledProperty` 的可复用控件，解除对 `MainWindowViewModel` 的直接绑定。
-- 新增 Dashboard、ReaderMonitor、Settings、Logs 页面占位与对应数据模板映射。
-- 扩展 Avalonia UI 测试并强化 CI 对 UI 结构与越层引用的门禁检查。
+- 明确 `.github/copilot-instructions.md` 中 UI 私有接口与跨层共享接口的放置规则。
+- 扩展 CI，防止 UI 私有接口误迁移到 Contracts，并阻断非 Avalonia 项目引用 Avalonia UI 命名空间。
+- 更新 README 与架构文档，补齐 UI 私有接口边界说明。
 
 ## 后续可完善点
 
-- 在保持分层边界不变的前提下，为导航服务补充选中态与返回栈能力。
-- 为 Dialog 服务接入真正的窗口级对话框宿主，并补齐 UI 自动化测试。
-- 在 Application 层形成稳定状态流后，为 Dashboard 与 Logs 页面接入真实只读展示数据。
+- 为后续新增跨层业务接口建立命名与目录审查清单，持续保持 `Contracts/Abstractions` 边界清晰。
+- 继续补充 CI 对跨层命名空间引用的细粒度门禁，避免 UI 结构回退。
+- 在保持当前禁止事项前提下，再逐步推进 UI 占位页面与只读状态流衔接。

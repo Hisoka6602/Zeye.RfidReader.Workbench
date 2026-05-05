@@ -41,6 +41,16 @@ jobs:
         run: |
           $ErrorActionPreference = "Stop"
 
+          function Remove-CodeComments {
+            param(
+              [Parameter(Mandatory = $true)]
+              [string] $SourceText
+            )
+
+            $withoutBlockComments = [regex]::Replace($SourceText, '/\*.*?\*/', '', [System.Text.RegularExpressions.RegexOptions]::Singleline)
+            return [regex]::Replace($withoutBlockComments, '(?m)^\s*//.*$', '')
+          }
+
           $repoRoot = Get-Location
           $requiredAvaloniaVersion = "12.0.2"
           $requiredMvvmVersion = "8.4.2"
@@ -111,6 +121,48 @@ jobs:
             }
           }
 
+          $avaloniaServicesRoot = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/Services"
+          $requiredAvaloniaServiceInterfaces = @(
+            "IAppNavigationService",
+            "IDialogService",
+            "IToastNotificationService",
+            "IUiDispatcher"
+          )
+          $avaloniaServiceFiles = Get-ChildItem -Path $avaloniaServicesRoot -Recurse -Include *.cs |
+            Where-Object { $_.FullName -notmatch '\\(obj|bin)\\' }
+
+          foreach ($requiredInterface in $requiredAvaloniaServiceInterfaces) {
+            $interfaceFound = $false
+            $requiredInterfaceRegex = [regex]::new(
+              '\binterface\s+' + [regex]::Escape($requiredInterface) + '(?!\w)',
+              [System.Text.RegularExpressions.RegexOptions]::Compiled)
+
+            foreach ($file in $avaloniaServiceFiles) {
+              $content = Remove-CodeComments -SourceText (Get-Content $file.FullName -Raw)
+              if ($requiredInterfaceRegex.IsMatch($content)) {
+                $interfaceFound = $true
+                break
+              }
+            }
+
+            if (-not $interfaceFound) {
+              throw "UI 私有接口必须保留在 Avalonia/Services 子目录：$requiredInterface"
+            }
+          }
+
+          $contractsFiles = Get-ChildItem -Path (Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Contracts") -Recurse -Include *.cs |
+            Where-Object { $_.FullName -notmatch '\\(obj|bin)\\' }
+          $forbiddenUiPrivateInterfacePattern = 'interface\s+(IAppNavigationService|IDialogService|IToastNotificationService|IUiDispatcher)\b'
+
+          foreach ($file in $contractsFiles) {
+            $content = Get-Content $file.FullName -Raw
+
+            if ($content -match $forbiddenUiPrivateInterfacePattern) {
+              $matchedInterface = $Matches[1]
+              throw "$matchedInterface 是 UI 私有接口，禁止放入 Contracts：$($file.FullName)"
+            }
+          }
+
           $sourceFiles = Get-ChildItem -Path (Join-Path $repoRoot "src") -Recurse -Include *.cs |
             Where-Object { $_.FullName -notmatch '\\(obj|bin)\\' }
 
@@ -123,6 +175,28 @@ jobs:
 
             if ($content -match 'new\s+MainWindow\s*\(') {
               throw "禁止手动 new MainWindow：$($file.FullName)"
+            }
+          }
+
+          $avaloniaProjectPathPattern = 'Zeye\.RfidReader\.Workbench\.Avalonia\\'
+          $avaloniaTestsProjectPathPattern = 'Zeye\.RfidReader\.Workbench\.Avalonia\.Tests\\'
+          $nonAvaloniaProjectFiles = Get-ChildItem -Path @((Join-Path $repoRoot "src"), (Join-Path $repoRoot "tests")) -Recurse -Include *.cs |
+            Where-Object {
+              $_.FullName -notmatch '\\(obj|bin)\\' -and
+              $_.FullName -notmatch $avaloniaProjectPathPattern -and
+              $_.FullName -notmatch $avaloniaTestsProjectPathPattern
+            }
+          $forbiddenAvaloniaNamespaceRegex = [regex]::new(
+            '(?<![\w._])Zeye\.RfidReader\.Workbench\.Avalonia\.(Services|ViewModels|Views)\b',
+            [System.Text.RegularExpressions.RegexOptions]::Compiled)
+
+          foreach ($file in $nonAvaloniaProjectFiles) {
+            $content = Remove-CodeComments -SourceText (Get-Content $file.FullName -Raw)
+            $namespaceMatch = $forbiddenAvaloniaNamespaceRegex.Match($content)
+
+            if ($namespaceMatch.Success) {
+              $lineNumber = (($content.Substring(0, $namespaceMatch.Index) -split "\r?\n").Count)
+              throw "非 Avalonia 项目禁止引用 $($namespaceMatch.Value)：$($file.FullName):$lineNumber"
             }
           }
 
@@ -168,10 +242,6 @@ jobs:
             if ($viewModelContent -notmatch ':\s+ViewModelBase') {
               throw "MainWindowViewModel 必须继承 ViewModelBase。"
             }
-
-            if ($viewModelContent -match 'using\s+Zeye\.RfidReader\.Workbench\.Infrastructure') {
-              throw "MainWindowViewModel 禁止引用 Infrastructure 命名空间。"
-            }
           }
 
           $avaloniaViewModels = Get-ChildItem -Path (Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/ViewModels") -Recurse -Include *.cs |
@@ -179,6 +249,10 @@ jobs:
 
           foreach ($viewModelFile in $avaloniaViewModels) {
             $viewModelFileContent = Get-Content $viewModelFile.FullName -Raw
+            if ($viewModelFileContent -match 'using\s+Zeye\.RfidReader\.Workbench\.Infrastructure') {
+              throw "Avalonia ViewModel 禁止引用 Infrastructure：$($viewModelFile.FullName)"
+            }
+
             if ($viewModelFileContent -match 'new\s+SimulatedRfidReaderSession\s*\(') {
               throw "Avalonia ViewModel 禁止直接创建 SimulatedRfidReaderSession：$($viewModelFile.FullName)"
             }
