@@ -111,17 +111,29 @@ jobs:
             }
           }
 
+          $avaloniaServicesRoot = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/Services"
           $requiredAvaloniaServiceInterfaces = @(
-            "src/Zeye.RfidReader.Workbench.Avalonia/Services/IAppNavigationService.cs",
-            "src/Zeye.RfidReader.Workbench.Avalonia/Services/IDialogService.cs",
-            "src/Zeye.RfidReader.Workbench.Avalonia/Services/IToastNotificationService.cs",
-            "src/Zeye.RfidReader.Workbench.Avalonia/Services/IUiDispatcher.cs"
+            "IAppNavigationService",
+            "IDialogService",
+            "IToastNotificationService",
+            "IUiDispatcher"
           )
+          $avaloniaServiceFiles = Get-ChildItem -Path $avaloniaServicesRoot -Recurse -Include *.cs |
+            Where-Object { $_.FullName -notmatch '\\(obj|bin)\\' }
 
           foreach ($requiredInterface in $requiredAvaloniaServiceInterfaces) {
-            $path = Join-Path $repoRoot $requiredInterface
-            if (!(Test-Path $path)) {
-              throw "UI 私有接口必须保留在 Avalonia/Services：$path"
+            $interfaceFound = $false
+
+            foreach ($file in $avaloniaServiceFiles) {
+              $content = Get-Content $file.FullName -Raw
+              if ($content -match ('interface\s+' + [regex]::Escape($requiredInterface) + '\b')) {
+                $interfaceFound = $true
+                break
+              }
+            }
+
+            if (-not $interfaceFound) {
+              throw "UI 私有接口必须保留在 Avalonia/Services 子目录：$requiredInterface"
             }
           }
 
@@ -154,25 +166,20 @@ jobs:
           }
 
           $avaloniaProjectPathPattern = 'Zeye\.RfidReader\.Workbench\.Avalonia\\'
-          $nonAvaloniaSourceFiles = Get-ChildItem -Path (Join-Path $repoRoot "src") -Recurse -Include *.cs |
+          $avaloniaTestsProjectPathPattern = 'Zeye\.RfidReader\.Workbench\.Avalonia\.Tests\\'
+          $nonAvaloniaCodeFiles = Get-ChildItem -Path @((Join-Path $repoRoot "src"), (Join-Path $repoRoot "tests")) -Recurse -Include *.cs |
             Where-Object {
               $_.FullName -notmatch '\\(obj|bin)\\' -and
-              $_.FullName -notmatch $avaloniaProjectPathPattern
+              $_.FullName -notmatch $avaloniaProjectPathPattern -and
+              $_.FullName -notmatch $avaloniaTestsProjectPathPattern
             }
+          $forbiddenAvaloniaNamespacePattern = 'Zeye\.RfidReader\.Workbench\.Avalonia\.(Services|ViewModels|Views)\b'
 
-          foreach ($file in $nonAvaloniaSourceFiles) {
+          foreach ($file in $nonAvaloniaCodeFiles) {
             $content = Get-Content $file.FullName -Raw
 
-            if ($content -match 'using\s+Zeye\.RfidReader\.Workbench\.Avalonia\.Services') {
-              throw "非 Avalonia 项目禁止引用 Avalonia.Services：$($file.FullName)"
-            }
-
-            if ($content -match 'using\s+Zeye\.RfidReader\.Workbench\.Avalonia\.ViewModels') {
-              throw "非 Avalonia 项目禁止引用 Avalonia.ViewModels：$($file.FullName)"
-            }
-
-            if ($content -match 'using\s+Zeye\.RfidReader\.Workbench\.Avalonia\.Views') {
-              throw "非 Avalonia 项目禁止引用 Avalonia.Views：$($file.FullName)"
+            if ($content -match $forbiddenAvaloniaNamespacePattern) {
+              throw "非 Avalonia 项目禁止引用 Zeye.RfidReader.Workbench.Avalonia.Services / ViewModels / Views：$($file.FullName)"
             }
           }
 
