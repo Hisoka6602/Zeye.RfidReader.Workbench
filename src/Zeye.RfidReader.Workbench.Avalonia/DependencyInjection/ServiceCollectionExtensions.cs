@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Zeye.RfidReader.Workbench.Avalonia.ViewModels;
+using Zeye.RfidReader.Workbench.Avalonia.Views;
 
 namespace Zeye.RfidReader.Workbench.Avalonia.DependencyInjection;
 
@@ -14,6 +16,12 @@ public static class ServiceCollectionExtensions
     /// <returns>服务集合。</returns>
     public static IServiceCollection AddRfidReaderWorkbenchAvalonia(this IServiceCollection services)
     {
+        services.AddSingleton<MainWindowViewModel>();
+        services.AddSingleton<MainWindow>(serviceProvider => new MainWindow
+        {
+            DataContext = serviceProvider.GetRequiredService<MainWindowViewModel>(),
+        });
+
         return services;
     }
 }

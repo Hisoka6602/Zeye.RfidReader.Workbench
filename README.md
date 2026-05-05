@@ -156,13 +156,13 @@ Zeye.RfidReader.Workbench
 
 ### Avalonia
 
-- `Program.cs`：提供桌面工程入口占位。
+- `Program.cs`：提供桌面工程入口与依赖注入容器初始化。
 - `App.axaml`：提供 Avalonia 应用 XAML 骨架。
-- `App.axaml.cs`：提供应用初始化与主窗口挂载入口。
-- `Views/MainWindow.axaml`：提供主窗口 XAML 骨架。
-- `Views/MainWindow.axaml.cs`：提供主窗口初始化与视图模型绑定。
+- `App.axaml.cs`：提供应用初始化与主窗口依赖解析入口。
+- `Views/MainWindow.axaml`：提供主窗口 XAML 骨架与 ViewModel 标题绑定。
+- `Views/MainWindow.axaml.cs`：提供主窗口初始化，不直接实例化 ViewModel。
 - `ViewModels/MainWindowViewModel.cs`：提供主窗口视图模型占位，不包含 RFID 通信逻辑。
-- `DependencyInjection/ServiceCollectionExtensions.cs`：预留 UI 层服务注册入口。
+- `DependencyInjection/ServiceCollectionExtensions.cs`：注册 UI 层窗口与视图模型。
 - `Services/.gitkeep`、`Models/.gitkeep`、`Converters/.gitkeep`：保留 UI 层目录结构。
 
 ### Tests

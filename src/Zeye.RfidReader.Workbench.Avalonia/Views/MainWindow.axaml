@@ -6,5 +6,5 @@
         Title="Zeye RFID Reader Workbench"
         Width="960"
         Height="640">
-    <TextBlock Text="Zeye RFID Reader Workbench" />
+    <TextBlock Text="{Binding Title}" />
 </Window>
