@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeye.RfidReader.Workbench.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeye.RfidReader.Workbench.Infrastructure.Tests", "tests\Zeye.RfidReader.Workbench.Infrastructure.Tests\Zeye.RfidReader.Workbench.Infrastructure.Tests.csproj", "{814B829B-5BCA-4386-AD07-EA51ED1BF8D0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zeye.RfidReader.Workbench.Avalonia.Tests", "tests\Zeye.RfidReader.Workbench.Avalonia.Tests\Zeye.RfidReader.Workbench.Avalonia.Tests.csproj", "{9FB8E24F-0918-422A-9BB4-DC97A05DC791}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,18 @@ Global
 		{814B829B-5BCA-4386-AD07-EA51ED1BF8D0}.Release|x64.Build.0 = Release|Any CPU
 		{814B829B-5BCA-4386-AD07-EA51ED1BF8D0}.Release|x86.ActiveCfg = Release|Any CPU
 		{814B829B-5BCA-4386-AD07-EA51ED1BF8D0}.Release|x86.Build.0 = Release|Any CPU
+		{9FB8E24F-0918-422A-9BB4-DC97A05DC791}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FB8E24F-0918-422A-9BB4-DC97A05DC791}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FB8E24F-0918-422A-9BB4-DC97A05DC791}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9FB8E24F-0918-422A-9BB4-DC97A05DC791}.Debug|x64.Build.0 = Debug|Any CPU
+		{9FB8E24F-0918-422A-9BB4-DC97A05DC791}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9FB8E24F-0918-422A-9BB4-DC97A05DC791}.Debug|x86.Build.0 = Debug|Any CPU
+		{9FB8E24F-0918-422A-9BB4-DC97A05DC791}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FB8E24F-0918-422A-9BB4-DC97A05DC791}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FB8E24F-0918-422A-9BB4-DC97A05DC791}.Release|x64.ActiveCfg = Release|Any CPU
+		{9FB8E24F-0918-422A-9BB4-DC97A05DC791}.Release|x64.Build.0 = Release|Any CPU
+		{9FB8E24F-0918-422A-9BB4-DC97A05DC791}.Release|x86.ActiveCfg = Release|Any CPU
+		{9FB8E24F-0918-422A-9BB4-DC97A05DC791}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,6 +156,7 @@ Global
 		{82340AB9-CD29-466C-8961-071F5554966B} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{2FCE23B7-3BB9-4392-802C-5ED4ABE4C96E} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{814B829B-5BCA-4386-AD07-EA51ED1BF8D0} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{9FB8E24F-0918-422A-9BB4-DC97A05DC791} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {78830099-BD84-4B80-A29A-76343605E353}

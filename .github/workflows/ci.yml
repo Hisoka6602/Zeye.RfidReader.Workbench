@@ -43,9 +43,12 @@ jobs:
 
           $repoRoot = Get-Location
           $requiredAvaloniaVersion = "12.0.2"
+          $requiredMvvmVersion = "8.4.2"
           $requiredAvaloniaVersionPattern = [regex]::Escape($requiredAvaloniaVersion)
+          $requiredMvvmVersionPattern = [regex]::Escape($requiredMvvmVersion)
           $desktopPattern = 'Avalonia\.Desktop"\s+Version="' + $requiredAvaloniaVersionPattern + '"'
           $fluentPattern = 'Avalonia\.Themes\.Fluent"\s+Version="' + $requiredAvaloniaVersionPattern + '"'
+          $mvvmPattern = 'CommunityToolkit\.Mvvm"\s+Version="' + $requiredMvvmVersionPattern + '"'
           $avaloniaProject = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/Zeye.RfidReader.Workbench.Avalonia.csproj"
           if (!(Test-Path $avaloniaProject)) {
             throw "未找到 Avalonia 项目文件。"
@@ -60,8 +63,20 @@ jobs:
             throw "Avalonia.Themes.Fluent 必须固定为 $requiredAvaloniaVersion。"
           }
 
+          if ($avaloniaContent -notmatch $mvvmPattern) {
+            throw "CommunityToolkit.Mvvm 必须固定为 $requiredMvvmVersion。"
+          }
+
           if ($avaloniaContent -match 'Avalonia\.[^"]*"\s+Version="11\.') {
             throw "禁止降级 Avalonia 到 11.x。"
+          }
+
+          if ($avaloniaContent -match 'PackageReference\s+Include="ReactiveUI"') {
+            throw "禁止引入 ReactiveUI。"
+          }
+
+          if ($avaloniaContent -match 'PackageReference\s+Include="Prism\.Wpf"') {
+            throw "禁止引入 Prism.Wpf。"
           }
 
           $sourceFiles = Get-ChildItem -Path (Join-Path $repoRoot "src") -Recurse -Include *.cs |
@@ -85,6 +100,82 @@ jobs:
             if ($programContent -match 'static\s+ServiceProvider\s+Services') {
               throw "Program.cs 禁止暴露全局静态 ServiceProvider。"
             }
+
+            if ($programContent -match 'ServiceProvider') {
+              throw "Program.cs 禁止出现 ServiceProvider。"
+            }
+          }
+
+          $appFile = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/App.axaml.cs"
+          if (Test-Path $appFile) {
+            $appContent = Get-Content $appFile -Raw
+            if ($appContent -match 'BuildServiceProvider') {
+              throw "App.axaml.cs 禁止出现 BuildServiceProvider，请使用 AvaloniaServiceProviderFactory。"
+            }
+
+            if ($appContent -match 'new\s+ServiceCollection') {
+              throw "App.axaml.cs 禁止直接创建 ServiceCollection，请使用 AvaloniaServiceProviderFactory。"
+            }
+          }
+
+          $mainWindowCodeBehind = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/Views/MainWindow.axaml.cs"
+          if (Test-Path $mainWindowCodeBehind) {
+            $mainWindowCodeBehindContent = Get-Content $mainWindowCodeBehind -Raw
+            if ($mainWindowCodeBehindContent -match 'public\s+MainWindow\s*\(\s*\)') {
+              throw "MainWindow.axaml.cs 禁止保留无参构造函数。"
+            }
+          }
+
+          $mainWindowViewModel = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/ViewModels/MainWindowViewModel.cs"
+          if (Test-Path $mainWindowViewModel) {
+            $viewModelContent = Get-Content $mainWindowViewModel -Raw
+            if ($viewModelContent -match 'record\s+class\s+MainWindowViewModel') {
+              throw "MainWindowViewModel 禁止继续使用 record class，必须使用真正 MVVM 基类。"
+            }
+
+            if ($viewModelContent -notmatch ':\s+ViewModelBase') {
+              throw "MainWindowViewModel 必须继承 ViewModelBase。"
+            }
+          }
+
+          $mainWindowXaml = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/Views/MainWindow.axaml"
+          if (Test-Path $mainWindowXaml) {
+            $mainWindowXamlContent = Get-Content $mainWindowXaml -Raw
+            if ($mainWindowXamlContent -match 'lottie:Lottie') {
+              throw "MainWindow.axaml 禁止直接使用 lottie:Lottie，必须封装到 RfidLottieView。"
+            }
+          }
+
+          $viewModelBase = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/ViewModels/ViewModelBase.cs"
+          if (!(Test-Path $viewModelBase)) {
+            throw "缺少 ViewModelBase.cs。"
+          }
+
+          $serviceProviderFactory = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/Bootstrap/AvaloniaServiceProviderFactory.cs"
+          if (!(Test-Path $serviceProviderFactory)) {
+            throw "缺少 AvaloniaServiceProviderFactory.cs。"
+          }
+
+          $lottieView = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/Controls/RfidLottieView.axaml"
+          if (!(Test-Path $lottieView)) {
+            throw "缺少 RfidLottieView.axaml。"
+          }
+
+          $avaloniaDiFile = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/DependencyInjection/ServiceCollectionExtensions.cs"
+          if (Test-Path $avaloniaDiFile) {
+            $avaloniaDiContent = Get-Content $avaloniaDiFile -Raw
+            if ($avaloniaDiContent -match 'AddSingleton<MainWindowViewModel>' -or $avaloniaDiContent -match 'AddSingleton<MainWindow>') {
+              throw "Avalonia 视图模型和窗口禁止使用 Singleton 注册。"
+            }
+
+            if ($avaloniaDiContent -notmatch 'AddTransient<MainWindowViewModel>' -or $avaloniaDiContent -notmatch 'AddTransient<MainWindow>') {
+              throw "Avalonia 视图模型和窗口必须使用 AddTransient 注册。"
+            }
+          }
+
+          $avaloniaTests = Join-Path $repoRoot "tests/Zeye.RfidReader.Workbench.Avalonia.Tests"
+          if (!(Test-Path $avaloniaTests)) {
+            throw "缺少 Avalonia.Tests 测试项目。"
           }
 
           if (!(Test-Path (Join-Path $repoRoot "README.md"))) {

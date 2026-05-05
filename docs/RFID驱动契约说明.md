@@ -30,3 +30,13 @@
 - `IRfidReaderClientManager`：聚焦多设备管理、重连编排与状态广播。
 
 本次仅沉淀原则，不直接落地真实设备客户端实现，避免在尚未引入应用编排层之前把设备通信逻辑压入 UI。
+
+## 与 Avalonia MVVM 的边界约束
+
+为补齐 Avalonia 端 MVVM 基线，当前已明确以下边界：
+
+- `MainWindowViewModel` 仅使用 `CommunityToolkit.Mvvm 8.4.2` 提供属性通知与命令，不直接引用 `Infrastructure` 具体实现。
+- 启动/停止命令当前只更新 UI 状态文本与运行标记，不创建 RFID 会话、不访问 TCP、串口、厂商 SDK、数据库。
+- Avalonia 层的 `BuildServiceProvider` 已迁移到独立工厂，避免 ViewModel 或视图代码自行解析容器。
+
+后续若接入真实驱动，应继续通过 `Application` 编排层消费本契约，再向 UI 投递纯展示状态，保持契约层稳定性与分层边界。

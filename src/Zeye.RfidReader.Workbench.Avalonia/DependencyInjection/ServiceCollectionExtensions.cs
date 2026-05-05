@@ -16,8 +16,8 @@ public static class ServiceCollectionExtensions
     /// <returns>服务集合。</returns>
     public static IServiceCollection AddRfidReaderWorkbenchAvalonia(this IServiceCollection services)
     {
-        services.AddSingleton<MainWindowViewModel>();
-        services.AddSingleton<MainWindow>();
+        services.AddTransient<MainWindowViewModel>();
+        services.AddTransient<MainWindow>();
 
         return services;
     }
