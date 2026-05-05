@@ -256,7 +256,7 @@ Avalonia
 - 新增 `.github/workflows/ci.yml`，执行还原、构建、测试与架构门禁检查。
 - 将枚举、接口、事件载荷迁移到 `Contracts` 规定目录并更新引用。
 - 将设备事件载荷统一改为 `readonly record struct`。
-- 为 Avalonia 主界面接入 `Avalonia.Labs.Lottie 12.0.2（`Avalonia.Labs.Lottie.Lottie` 控件）` 与本地动画资源。
+- 为 Avalonia 主界面接入 `Avalonia.Labs.Lottie 12.0.2` 的 `Avalonia.Labs.Lottie.Lottie` 控件与本地动画资源。
 - 将 docs 重命名为中文文件名并补充架构与借鉴说明。
 
 ## 后续可完善点

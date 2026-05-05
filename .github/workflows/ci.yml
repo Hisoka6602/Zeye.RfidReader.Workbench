@@ -34,7 +34,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: 测试
-        run: dotnet test --configuration Release --no-build
+        run: dotnet test --configuration Release --no-build --no-restore
 
       - name: 架构门禁检查
         shell: pwsh
@@ -44,8 +44,8 @@ jobs:
           $repoRoot = Get-Location
           $requiredAvaloniaVersion = "12.0.2"
           $requiredAvaloniaVersionPattern = [regex]::Escape($requiredAvaloniaVersion)
-          $desktopPattern = "Avalonia\.Desktop\"\s+Version=\"$requiredAvaloniaVersionPattern\""
-          $fluentPattern = "Avalonia\.Themes\.Fluent\"\s+Version=\"$requiredAvaloniaVersionPattern\""
+          $desktopPattern = 'Avalonia\.Desktop"\s+Version="' + $requiredAvaloniaVersionPattern + '"'
+          $fluentPattern = 'Avalonia\.Themes\.Fluent"\s+Version="' + $requiredAvaloniaVersionPattern + '"'
           $avaloniaProject = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/Zeye.RfidReader.Workbench.Avalonia.csproj"
           if (!(Test-Path $avaloniaProject)) {
             throw "未找到 Avalonia 项目文件。"
