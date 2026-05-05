@@ -31,9 +31,11 @@ public sealed partial class App : global::Avalonia.Application
 
     private static void OnDesktopExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
     {
-        if (Program.Services is IDisposable disposable)
+        if (sender is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            disposable.Dispose();
+            desktop.Exit -= OnDesktopExit;
         }
+
+        Program.DisposeServices();
     }
 }

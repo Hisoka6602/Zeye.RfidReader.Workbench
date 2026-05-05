@@ -9,7 +9,7 @@ namespace Zeye.RfidReader.Workbench.Avalonia;
 
 internal static class Program
 {
-    internal static IServiceProvider Services { get; } = CreateServiceProvider();
+    internal static ServiceProvider Services { get; } = CreateServiceProvider();
 
     [STAThread]
     private static void Main(string[] args)
@@ -24,7 +24,12 @@ internal static class Program
             .LogToTrace();
     }
 
-    private static IServiceProvider CreateServiceProvider()
+    internal static void DisposeServices()
+    {
+        Services.Dispose();
+    }
+
+    private static ServiceProvider CreateServiceProvider()
     {
         var services = new ServiceCollection();
         services.AddRfidReaderWorkbenchApplication();
