@@ -39,7 +39,7 @@
     - UI 私有接口示例：`IAppNavigationService`、`IDialogService`、`IToastNotificationService`、`IUiDispatcher`
     - 判断规则：
       1. 如果接口会被多个项目共享，必须放入 `Contracts/Abstractions`
-      2. 如果接口只服务于 Avalonia UI 层，并且依赖 UI 概念、页面、弹窗、导航、UI 线程、通知展示，则允许放在 `Avalonia/Services`
+      2. 如果接口只服务于 Avalonia UI 层、依赖 UI 概念、页面、弹窗、导航、UI 线程、通知展示，并且未来不会跨层共享，则允许放在 `Avalonia/Services`
       3. 如果接口当前仅被 Avalonia 使用，但未来可能跨层共享，仍应优先放入 `Contracts/Abstractions`
       4. 如果接口承载业务能力抽象，例如状态查询、配置读取、命令执行或运行时协调，即使当前只在 Avalonia 使用，也应视为未来可能跨层共享
     - 禁止事项：
