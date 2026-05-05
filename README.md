@@ -91,14 +91,18 @@ Zeye.RfidReader.Workbench
 │       ├── ViewModels
 │       │   └── MainWindowViewModel.cs
 │       ├── Views
-│       │   └── MainWindow.axaml
+│       │   ├── MainWindow.axaml
+│       │   └── MainWindow.axaml.cs
 │       └── Zeye.RfidReader.Workbench.Avalonia.csproj
 ├── tests
 │   ├── Zeye.RfidReader.Workbench.Domain.Tests
+│   │   ├── RfidReaderEnumsTests.cs
 │   │   └── Zeye.RfidReader.Workbench.Domain.Tests.csproj
 │   ├── Zeye.RfidReader.Workbench.Application.Tests
+│   │   ├── RfidReadersOptionsTests.cs
 │   │   └── Zeye.RfidReader.Workbench.Application.Tests.csproj
 │   └── Zeye.RfidReader.Workbench.Infrastructure.Tests
+│       ├── RfidReaderDriverRegistryTests.cs
 │       └── Zeye.RfidReader.Workbench.Infrastructure.Tests.csproj
 ├── docs
 │   ├── architecture.md
@@ -152,17 +156,21 @@ Zeye.RfidReader.Workbench
 
 - `Program.cs`：提供桌面工程入口占位。
 - `App.axaml`：提供 Avalonia 应用 XAML 骨架。
-- `App.axaml.cs`：提供应用类型占位。
+- `App.axaml.cs`：提供应用初始化与主窗口挂载入口。
 - `Views/MainWindow.axaml`：提供主窗口 XAML 骨架。
+- `Views/MainWindow.axaml.cs`：提供主窗口初始化与视图模型绑定。
 - `ViewModels/MainWindowViewModel.cs`：提供主窗口视图模型占位，不包含 RFID 通信逻辑。
 - `DependencyInjection/ServiceCollectionExtensions.cs`：预留 UI 层服务注册入口。
 - `Services/.gitkeep`、`Models/.gitkeep`、`Converters/.gitkeep`：保留 UI 层目录结构。
 
 ### Tests
 
-- `Zeye.RfidReader.Workbench.Domain.Tests.csproj`：Domain 层测试项目骨架。
-- `Zeye.RfidReader.Workbench.Application.Tests.csproj`：Application 层测试项目骨架。
-- `Zeye.RfidReader.Workbench.Infrastructure.Tests.csproj`：Infrastructure 层测试项目骨架。
+- `RfidReaderEnumsTests.cs`：验证 Domain 枚举描述特性。
+- `RfidReadersOptionsTests.cs`：验证 Application 配置默认值。
+- `RfidReaderDriverRegistryTests.cs`：验证 Infrastructure 驱动注册表行为。
+- `Zeye.RfidReader.Workbench.Domain.Tests.csproj`：Domain 层测试项目。
+- `Zeye.RfidReader.Workbench.Application.Tests.csproj`：Application 层测试项目。
+- `Zeye.RfidReader.Workbench.Infrastructure.Tests.csproj`：Infrastructure 层测试项目。
 
 ## 分层依赖关系
 
@@ -215,6 +223,7 @@ Avalonia
 - 定义驱动注册表、驱动工厂实现、本地时钟实现与模拟驱动骨架。
 - 创建 Avalonia 工程骨架目录与主窗口占位。
 - 创建测试项目骨架。
+- 增加分层最小单元测试。
 
 ## 后续待实现能力
 

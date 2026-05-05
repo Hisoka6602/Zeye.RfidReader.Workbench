@@ -1,8 +1,29 @@
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml;
+using Zeye.RfidReader.Workbench.Avalonia.Views;
+
 namespace Zeye.RfidReader.Workbench.Avalonia;
 
 /// <summary>
-/// Avalonia 应用入口类型占位。
+/// Avalonia 应用入口类型。
 /// </summary>
-public sealed partial class App
+public sealed partial class App : global::Avalonia.Application
 {
+    /// <inheritdoc />
+    public override void Initialize()
+    {
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    /// <inheritdoc />
+    public override void OnFrameworkInitializationCompleted()
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            desktop.MainWindow = new MainWindow();
+        }
+
+        base.OnFrameworkInitializationCompleted();
+    }
 }
