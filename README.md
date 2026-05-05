@@ -28,6 +28,7 @@ Zeye.RfidReader.Workbench
 │   │   │   └── RfidReaderVendorType.cs
 │   │   ├── Events
 │   │   │   ├── RfidReaderFaultedEventArgs.cs
+│   │   │   ├── RfidReaderEventHandler.cs
 │   │   │   ├── RfidReaderStatusChangedEventArgs.cs
 │   │   │   └── RfidTagReadEventArgs.cs
 │   │   ├── Tags
@@ -123,6 +124,7 @@ Zeye.RfidReader.Workbench
 - `RfidReaderCapability.cs`：定义读码器能力标记。
 - `RfidTag.cs`：定义 RFID 标签领域对象。
 - `RfidTagReadEventArgs.cs`：定义标签读取事件载荷。
+- `RfidReaderEventHandler.cs`：定义 RFID 读码器事件处理委托。
 - `RfidReaderStatusChangedEventArgs.cs`：定义连接状态变化事件载荷。
 - `RfidReaderFaultedEventArgs.cs`：定义读码器故障事件载荷。
 

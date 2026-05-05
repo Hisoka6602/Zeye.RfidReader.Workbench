@@ -3,7 +3,7 @@ namespace Zeye.RfidReader.Workbench.Domain.Events;
 /// <summary>
 /// RFID 读码器故障事件载荷。
 /// </summary>
-public readonly record struct RfidReaderFaultedEventArgs
+public sealed record class RfidReaderFaultedEventArgs
 {
     /// <summary>
     /// 读码器编码。

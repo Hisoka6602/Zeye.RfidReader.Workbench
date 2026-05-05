@@ -5,7 +5,7 @@ namespace Zeye.RfidReader.Workbench.Domain.Events;
 /// <summary>
 /// RFID 读码器状态变更事件载荷。
 /// </summary>
-public readonly record struct RfidReaderStatusChangedEventArgs
+public sealed record class RfidReaderStatusChangedEventArgs
 {
     /// <summary>
     /// 读码器编码。

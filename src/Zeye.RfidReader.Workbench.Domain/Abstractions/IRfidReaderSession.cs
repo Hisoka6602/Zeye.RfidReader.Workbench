@@ -20,17 +20,17 @@ public interface IRfidReaderSession : IAsyncDisposable
     /// <summary>
     /// 标签读取事件。
     /// </summary>
-    event EventHandler<RfidTagReadEventArgs>? TagRead;
+    event RfidReaderEventHandler<RfidTagReadEventArgs>? TagRead;
 
     /// <summary>
     /// 状态变更事件。
     /// </summary>
-    event EventHandler<RfidReaderStatusChangedEventArgs>? StatusChanged;
+    event RfidReaderEventHandler<RfidReaderStatusChangedEventArgs>? StatusChanged;
 
     /// <summary>
     /// 故障事件。
     /// </summary>
-    event EventHandler<RfidReaderFaultedEventArgs>? Faulted;
+    event RfidReaderEventHandler<RfidReaderFaultedEventArgs>? Faulted;
 
     /// <summary>
     /// 连接读码器。
