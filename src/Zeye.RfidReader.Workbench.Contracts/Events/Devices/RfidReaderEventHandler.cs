@@ -7,4 +7,4 @@ namespace Zeye.RfidReader.Workbench.Contracts.Events.Devices;
 /// <param name="sender">事件发送方。</param>
 /// <param name="eventArgs">事件载荷。</param>
 public delegate void RfidReaderEventHandler<TArgs>(object? sender, TArgs eventArgs)
-    where TArgs : struct;
+    where TArgs : notnull;

@@ -42,18 +42,22 @@ jobs:
           $ErrorActionPreference = "Stop"
 
           $repoRoot = Get-Location
+          $requiredAvaloniaVersion = "12.0.2"
+          $requiredAvaloniaVersionPattern = [regex]::Escape($requiredAvaloniaVersion)
+          $desktopPattern = "Avalonia\.Desktop\"\s+Version=\"$requiredAvaloniaVersionPattern\""
+          $fluentPattern = "Avalonia\.Themes\.Fluent\"\s+Version=\"$requiredAvaloniaVersionPattern\""
           $avaloniaProject = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/Zeye.RfidReader.Workbench.Avalonia.csproj"
           if (!(Test-Path $avaloniaProject)) {
             throw "未找到 Avalonia 项目文件。"
           }
 
           $avaloniaContent = Get-Content $avaloniaProject -Raw
-          if ($avaloniaContent -notmatch 'Avalonia\.Desktop"\s+Version="12\.0\.2"') {
-            throw "Avalonia.Desktop 必须固定为 12.0.2。"
+          if ($avaloniaContent -notmatch $desktopPattern) {
+            throw "Avalonia.Desktop 必须固定为 $requiredAvaloniaVersion。"
           }
 
-          if ($avaloniaContent -notmatch 'Avalonia\.Themes\.Fluent"\s+Version="12\.0\.2"') {
-            throw "Avalonia.Themes.Fluent 必须固定为 12.0.2。"
+          if ($avaloniaContent -notmatch $fluentPattern) {
+            throw "Avalonia.Themes.Fluent 必须固定为 $requiredAvaloniaVersion。"
           }
 
           if ($avaloniaContent -match 'Avalonia\.[^"]*"\s+Version="11\.') {
@@ -99,7 +103,7 @@ jobs:
               continue
             }
 
-            if ($md.Name -notmatch '[一-龥]') {
+            if ($md.Name -notmatch '\p{IsCJKUnifiedIdeographs}') {
               throw "除 README.md 与 .github/copilot-instructions.md 外，md 文件名必须包含中文：$($md.FullName)"
             }
           }

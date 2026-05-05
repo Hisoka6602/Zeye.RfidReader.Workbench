@@ -5,6 +5,8 @@ namespace Zeye.RfidReader.Workbench.Avalonia.ViewModels;
 /// </summary>
 public sealed record class MainWindowViewModel
 {
+    private const string DefaultLottieAnimationPath = "avares://Zeye.RfidReader.Workbench.Avalonia/Assets/Animations/rfid-reader-loading.json";
+
     /// <summary>
     /// 标题文本。
     /// </summary>
@@ -23,5 +25,5 @@ public sealed record class MainWindowViewModel
     /// <summary>
     /// Lottie 动画资源路径。
     /// </summary>
-    public string LottieAnimationPath { get; init; } = "avares://Zeye.RfidReader.Workbench.Avalonia/Assets/Animations/rfid-reader-loading.json";
+    public string LottieAnimationPath { get; init; } = DefaultLottieAnimationPath;
 }
