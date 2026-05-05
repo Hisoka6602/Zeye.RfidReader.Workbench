@@ -41,6 +41,16 @@ jobs:
         run: |
           $ErrorActionPreference = "Stop"
 
+          function Remove-CodeComments {
+            param(
+              [Parameter(Mandatory = $true)]
+              [string] $SourceText
+            )
+
+            $withoutBlockComments = [regex]::Replace($SourceText, '/\*.*?\*/', '', [System.Text.RegularExpressions.RegexOptions]::Singleline)
+            return [regex]::Replace($withoutBlockComments, '(?m)^\s*//.*$', '')
+          }
+
           $repoRoot = Get-Location
           $requiredAvaloniaVersion = "12.0.2"
           $requiredMvvmVersion = "8.4.2"
@@ -128,7 +138,7 @@ jobs:
               [System.Text.RegularExpressions.RegexOptions]::Compiled)
 
             foreach ($file in $avaloniaServiceFiles) {
-              $content = Get-Content $file.FullName -Raw
+              $content = Remove-CodeComments -SourceText (Get-Content $file.FullName -Raw)
               if ($requiredInterfaceRegex.IsMatch($content)) {
                 $interfaceFound = $true
                 break
@@ -177,11 +187,11 @@ jobs:
               $_.FullName -notmatch $avaloniaTestsProjectPathPattern
             }
           $forbiddenAvaloniaNamespaceRegex = [regex]::new(
-            '(?<![\w.])Zeye\.RfidReader\.Workbench\.Avalonia\.(Services|ViewModels|Views)\b',
+            '(?<![\w._])Zeye\.RfidReader\.Workbench\.Avalonia\.(Services|ViewModels|Views)\b',
             [System.Text.RegularExpressions.RegexOptions]::Compiled)
 
           foreach ($file in $nonAvaloniaProjectFiles) {
-            $content = Get-Content $file.FullName -Raw
+            $content = Remove-CodeComments -SourceText (Get-Content $file.FullName -Raw)
             $namespaceMatch = $forbiddenAvaloniaNamespaceRegex.Match($content)
 
             if ($namespaceMatch.Success) {
