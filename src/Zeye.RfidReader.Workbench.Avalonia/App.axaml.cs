@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
 using Zeye.RfidReader.Workbench.Avalonia.Views;
 
 namespace Zeye.RfidReader.Workbench.Avalonia;
@@ -21,9 +22,20 @@ public sealed partial class App : global::Avalonia.Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow();
+            desktop.MainWindow = Program.Services.GetRequiredService<MainWindow>();
+            desktop.Exit += OnDesktopExit;
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private static void OnDesktopExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
+    {
+        if (sender is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            desktop.Exit -= OnDesktopExit;
+        }
+
+        Program.DisposeServices();
     }
 }
