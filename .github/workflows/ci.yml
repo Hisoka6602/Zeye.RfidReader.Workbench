@@ -121,30 +121,26 @@ jobs:
           foreach ($requiredInterface in $requiredAvaloniaServiceInterfaces) {
             $path = Join-Path $repoRoot $requiredInterface
             if (!(Test-Path $path)) {
-              throw "UI 私有接口必须保留在 Avalonia/Services：$requiredInterface"
+              throw "UI 私有接口必须保留在 Avalonia/Services：$path"
             }
           }
 
           $contractsFiles = Get-ChildItem -Path (Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Contracts") -Recurse -Include *.cs |
             Where-Object { $_.FullName -notmatch '\\(obj|bin)\\' }
+          $forbiddenUiPrivateInterfaces = @(
+            "IAppNavigationService",
+            "IDialogService",
+            "IToastNotificationService",
+            "IUiDispatcher"
+          )
 
           foreach ($file in $contractsFiles) {
             $content = Get-Content $file.FullName -Raw
 
-            if ($content -match 'interface\s+IAppNavigationService') {
-              throw "IAppNavigationService 是 UI 私有接口，禁止放入 Contracts：$($file.FullName)"
-            }
-
-            if ($content -match 'interface\s+IDialogService') {
-              throw "IDialogService 是 UI 私有接口，禁止放入 Contracts：$($file.FullName)"
-            }
-
-            if ($content -match 'interface\s+IToastNotificationService') {
-              throw "IToastNotificationService 是 UI 私有接口，禁止放入 Contracts：$($file.FullName)"
-            }
-
-            if ($content -match 'interface\s+IUiDispatcher') {
-              throw "IUiDispatcher 是 UI 私有接口，禁止放入 Contracts：$($file.FullName)"
+            foreach ($forbiddenInterface in $forbiddenUiPrivateInterfaces) {
+              if ($content -match ('interface\s+' + [regex]::Escape($forbiddenInterface))) {
+                throw "$forbiddenInterface 是 UI 私有接口，禁止放入 Contracts：$($file.FullName)"
+              }
             }
           }
 
