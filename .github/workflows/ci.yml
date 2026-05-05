@@ -123,10 +123,13 @@ jobs:
 
           foreach ($requiredInterface in $requiredAvaloniaServiceInterfaces) {
             $interfaceFound = $false
+            $requiredInterfaceRegex = [regex]::new(
+              '\binterface\s+' + [regex]::Escape($requiredInterface) + '(?!\w)',
+              [System.Text.RegularExpressions.RegexOptions]::Compiled)
 
             foreach ($file in $avaloniaServiceFiles) {
               $content = Get-Content $file.FullName -Raw
-              if ($content -match ('interface\s+' + [regex]::Escape($requiredInterface) + '(?!\w)')) {
+              if ($requiredInterfaceRegex.IsMatch($content)) {
                 $interfaceFound = $true
                 break
               }
@@ -173,13 +176,17 @@ jobs:
               $_.FullName -notmatch $avaloniaProjectPathPattern -and
               $_.FullName -notmatch $avaloniaTestsProjectPathPattern
             }
-          $forbiddenAvaloniaNamespacePattern = '(?<![\w.])Zeye\.RfidReader\.Workbench\.Avalonia\.(Services|ViewModels|Views)\b'
+          $forbiddenAvaloniaNamespaceRegex = [regex]::new(
+            '(?<![\w.])Zeye\.RfidReader\.Workbench\.Avalonia\.(Services|ViewModels|Views)\b',
+            [System.Text.RegularExpressions.RegexOptions]::Compiled)
 
           foreach ($file in $nonAvaloniaProjectFiles) {
             $content = Get-Content $file.FullName -Raw
+            $namespaceMatch = $forbiddenAvaloniaNamespaceRegex.Match($content)
 
-            if ($content -match $forbiddenAvaloniaNamespacePattern) {
-              throw "非 Avalonia 项目禁止引用 $($Matches[0])：$($file.FullName)"
+            if ($namespaceMatch.Success) {
+              $lineNumber = (($content.Substring(0, $namespaceMatch.Index) -split "\r?\n").Count)
+              throw "非 Avalonia 项目禁止引用 $($namespaceMatch.Value)：$($file.FullName):$lineNumber"
             }
           }
 
