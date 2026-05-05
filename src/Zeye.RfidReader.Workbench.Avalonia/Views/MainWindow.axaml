@@ -26,7 +26,7 @@
                                   Height="280"
                                   AutoPlay="True"
                                   RepeatCount="-1"
-                                  Path="avares://Zeye.RfidReader.Workbench.Avalonia/Assets/Animations/rfid-reader-loading.json" />
+                                  Path="{Binding LottieAnimationPath}" />
                     <TextBlock HorizontalAlignment="Center" FontSize="16" FontWeight="SemiBold" Text="RFID 动画占位" />
                 </StackPanel>
             </Border>

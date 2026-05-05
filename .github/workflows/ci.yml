@@ -10,6 +10,9 @@ on:
       - master
       - main
 
+permissions:
+  contents: read
+
 jobs:
   build-test:
     name: Build and Test
@@ -58,7 +61,7 @@ jobs:
           }
 
           $sourceFiles = Get-ChildItem -Path (Join-Path $repoRoot "src") -Recurse -Include *.cs |
-            Where-Object { $_.FullName -notmatch '\obj\|\bin\' }
+            Where-Object { $_.FullName -notmatch '\\(obj|bin)\\' }
 
           foreach ($file in $sourceFiles) {
             $content = Get-Content $file.FullName -Raw
@@ -89,7 +92,7 @@ jobs:
           }
 
           $markdownFiles = Get-ChildItem -Path $repoRoot -Recurse -Include *.md |
-            Where-Object { $_.FullName -notmatch '\bin\|\obj\|\.git\' }
+            Where-Object { $_.FullName -notmatch '\\(bin|obj|\.git)\\' }
 
           foreach ($md in $markdownFiles) {
             if ($md.Name -eq "README.md" -or $md.FullName -eq (Join-Path $repoRoot ".github/copilot-instructions.md")) {
@@ -102,7 +105,7 @@ jobs:
           }
 
           $nlogFiles = Get-ChildItem -Path $repoRoot -Recurse -Filter nlog.config |
-            Where-Object { $_.FullName -notmatch '\bin\|\obj\' }
+            Where-Object { $_.FullName -notmatch '\\(bin|obj)\\' }
 
           if ($nlogFiles.Count -eq 0) {
             Write-Host "提示：当前仓库尚未接入 nlog.config，暂不执行 archiveAboveSize 阻断检查。"

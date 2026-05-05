@@ -19,4 +19,9 @@ public sealed record class MainWindowViewModel
     /// 状态提示文本。
     /// </summary>
     public string StatusText { get; init; } = "已接入 Avalonia 12.0.2 对应的 Lottie 资源，后续可绑定实际设备状态。";
+
+    /// <summary>
+    /// Lottie 动画资源路径。
+    /// </summary>
+    public string LottieAnimationPath { get; init; } = "avares://Zeye.RfidReader.Workbench.Avalonia/Assets/Animations/rfid-reader-loading.json";
 }
