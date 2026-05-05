@@ -1,10 +1,10 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:lottie="clr-namespace:Avalonia.Labs.Lottie;assembly=Avalonia.Labs.Lottie"
+        xmlns:controls="using:Zeye.RfidReader.Workbench.Avalonia.Controls"
         xmlns:vm="using:Zeye.RfidReader.Workbench.Avalonia.ViewModels"
         x:Class="Zeye.RfidReader.Workbench.Avalonia.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="Zeye RFID Reader Workbench"
+        Title="{Binding Title}"
         Width="960"
         Height="640"
         MinWidth="720"
@@ -16,26 +16,23 @@
         </StackPanel>
 
         <Border Grid.Row="1" Padding="16" Background="#112C3E50" CornerRadius="12">
-            <TextBlock FontSize="14" Text="{Binding StatusText}" TextWrapping="Wrap" />
+            <StackPanel Spacing="16">
+                <TextBlock FontSize="14" Text="{Binding StatusText}" TextWrapping="Wrap" />
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Button Content="启动读码" Command="{Binding StartReadingCommand}" />
+                    <Button Content="停止读码" Command="{Binding StopReadingCommand}" />
+                </StackPanel>
+            </StackPanel>
         </Border>
 
         <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="24">
-            <Border Padding="24" Background="#0F3D4F62" CornerRadius="16">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
-                    <lottie:Lottie Width="280"
-                                  Height="280"
-                                  AutoPlay="True"
-                                  RepeatCount="-1"
-                                  Path="{Binding LottieAnimationPath}" />
-                    <TextBlock HorizontalAlignment="Center" FontSize="16" FontWeight="SemiBold" Text="RFID 动画占位" />
-                </StackPanel>
-            </Border>
+            <controls:RfidLottieView />
 
             <Border Grid.Column="1" Padding="24" Background="#0F3D4F62" CornerRadius="16">
                 <StackPanel Spacing="12">
                     <TextBlock FontSize="18" FontWeight="SemiBold" Text="当前阶段说明" />
-                    <TextBlock Text="• 枚举、接口与事件载荷已统一迁移到 Contracts。" TextWrapping="Wrap" />
-                    <TextBlock Text="• ViewModel 仍保持无设备通信逻辑，仅承载展示文案。" TextWrapping="Wrap" />
+                    <TextBlock Text="• 主窗口已接入 CommunityToolkit.Mvvm 属性通知与命令。" TextWrapping="Wrap" />
+                    <TextBlock Text="• Lottie 控件已集中封装到 RfidLottieView，页面不再直接引用动画控件。" TextWrapping="Wrap" />
                     <TextBlock Text="• 后续设备客户端可在 Application 层编排后再向 UI 投递状态。" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>

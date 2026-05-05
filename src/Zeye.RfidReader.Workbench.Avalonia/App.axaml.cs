@@ -1,10 +1,8 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
-using Zeye.RfidReader.Workbench.Application.DependencyInjection;
-using Zeye.RfidReader.Workbench.Avalonia.DependencyInjection;
+using Zeye.RfidReader.Workbench.Avalonia.Bootstrap;
 using Zeye.RfidReader.Workbench.Avalonia.Views;
-using Zeye.RfidReader.Workbench.Infrastructure.DependencyInjection;
 
 namespace Zeye.RfidReader.Workbench.Avalonia;
 
@@ -26,7 +24,7 @@ public sealed partial class App : global::Avalonia.Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            _serviceProvider = CreateServiceProvider();
+            _serviceProvider = AvaloniaServiceProviderFactory.Create();
             desktop.MainWindow = _serviceProvider.GetRequiredService<MainWindow>();
             desktop.Exit += OnDesktopExit;
         }
@@ -48,18 +46,5 @@ public sealed partial class App : global::Avalonia.Application
 
         _serviceProvider?.Dispose();
         _serviceProvider = null;
-    }
-
-    /// <summary>
-    /// 创建应用服务提供器。
-    /// </summary>
-    /// <returns>服务提供器。</returns>
-    private static ServiceProvider CreateServiceProvider()
-    {
-        var services = new ServiceCollection();
-        services.AddRfidReaderWorkbenchApplication();
-        services.AddRfidReaderWorkbenchInfrastructure();
-        services.AddRfidReaderWorkbenchAvalonia();
-        return services.BuildServiceProvider(validateScopes: true);
     }
 }

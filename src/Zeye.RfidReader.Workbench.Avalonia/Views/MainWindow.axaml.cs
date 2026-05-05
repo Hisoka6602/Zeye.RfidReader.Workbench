@@ -11,18 +11,10 @@ public sealed partial class MainWindow : Window
     /// <summary>
     /// 初始化主窗口实例。
     /// </summary>
-    public MainWindow()
-    {
-        InitializeComponent();
-    }
-
-    /// <summary>
-    /// 初始化主窗口实例。
-    /// </summary>
     /// <param name="viewModel">主窗口视图模型。</param>
     public MainWindow(MainWindowViewModel viewModel)
-        : this()
     {
+        InitializeComponent();
         DataContext = viewModel;
     }
 }

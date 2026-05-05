@@ -2,14 +2,14 @@
 
 ## 项目简介
 
-Zeye.RfidReader.Workbench 是 RFID 读码器工作台的架构基线工程。本阶段聚焦契约收敛、CI 门禁、Avalonia 12.0.2 桌面骨架与 Lottie 动画接入，不包含真实厂商 SDK、TCP 读码、串口读码、数据库或外部系统上报实现。
+Zeye.RfidReader.Workbench 是 RFID 读码器工作台的架构基线工程。本阶段聚焦契约收敛、CI 门禁、Avalonia 12.0.2 桌面骨架、CommunityToolkit.Mvvm 接入与 Lottie 动画封装，不包含真实厂商 SDK、TCP 读码、串口读码、数据库或外部系统上报实现。
 
 ## 当前分层结构
 
 - `Contracts`：跨层共享接口、枚举、事件载荷、设备配置模型与通用契约。
 - `Application`：应用层入口与 `Options` 配置结构。
 - `Infrastructure`：驱动注册、驱动工厂、时钟实现与模拟会话。
-- `Avalonia`：桌面 UI、依赖注入组合根与 Lottie 动画展示。
+- `Avalonia`：桌面 UI、MVVM 视图模型、依赖注入组合根工厂与 Lottie 动画控件封装。
 - `Domain`：纯领域对象与预留领域目录。
 - `tests`：分层测试项目。
 - `.github/workflows`：CI 工作流与架构门禁。
@@ -45,6 +45,11 @@ Zeye.RfidReader.Workbench
 │   │   ├── Assets
 │   │   │   └── Animations
 │   │   │       └── rfid-reader-loading.json
+│   │   ├── Bootstrap
+│   │   │   └── AvaloniaServiceProviderFactory.cs
+│   │   ├── Controls
+│   │   │   ├── RfidLottieView.axaml
+│   │   │   └── RfidLottieView.axaml.cs
 │   │   ├── Converters
 │   │   │   └── .gitkeep
 │   │   ├── DependencyInjection
@@ -55,7 +60,8 @@ Zeye.RfidReader.Workbench
 │   │   ├── Services
 │   │   │   └── .gitkeep
 │   │   ├── ViewModels
-│   │   │   └── MainWindowViewModel.cs
+│   │   │   ├── MainWindowViewModel.cs
+│   │   │   └── ViewModelBase.cs
 │   │   ├── Views
 │   │   │   ├── MainWindow.axaml
 │   │   │   └── MainWindow.axaml.cs
@@ -125,6 +131,9 @@ Zeye.RfidReader.Workbench
 │   ├── Zeye.RfidReader.Workbench.Application.Tests
 │   │   ├── RfidReadersOptionsTests.cs
 │   │   └── Zeye.RfidReader.Workbench.Application.Tests.csproj
+│   ├── Zeye.RfidReader.Workbench.Avalonia.Tests
+│   │   ├── MainWindowViewModelTests.cs
+│   │   └── Zeye.RfidReader.Workbench.Avalonia.Tests.csproj
 │   ├── Zeye.RfidReader.Workbench.Domain.Tests
 │   │   ├── RfidReaderEnumsTests.cs
 │   │   └── Zeye.RfidReader.Workbench.Domain.Tests.csproj
@@ -157,12 +166,16 @@ Zeye.RfidReader.Workbench
 
 - `Program.cs`：负责桌面应用启动。
 - `App.axaml`：提供 Avalonia 应用 XAML 骨架。
-- `App.axaml.cs`：负责组合根服务创建、主窗口解析与容器释放。
+- `App.axaml.cs`：负责调用服务提供器工厂、解析主窗口并释放容器。
 - `Assets/Animations/rfid-reader-loading.json`：提供本地 Lottie 动画资源。
-- `ViewModels/MainWindowViewModel.cs`：提供主窗口展示文案，不承载设备通信逻辑。
-- `Views/MainWindow.axaml`：展示主界面、架构说明与 Lottie 动画占位。
-- `Views/MainWindow.axaml.cs`：提供主窗口初始化与 ViewModel 注入。
-- `DependencyInjection/ServiceCollectionExtensions.cs`：注册 UI 层窗口与视图模型。
+- `Bootstrap/AvaloniaServiceProviderFactory.cs`：集中创建 Avalonia 组合根服务提供器。
+- `Controls/RfidLottieView.axaml`：封装统一的 RFID Lottie 动画展示控件。
+- `Controls/RfidLottieView.axaml.cs`：提供 RFID Lottie 动画控件初始化入口。
+- `ViewModels/ViewModelBase.cs`：定义基于 `ObservableObject` 的视图模型基类。
+- `ViewModels/MainWindowViewModel.cs`：提供主窗口展示文案、属性通知与启动/停止命令，不承载设备通信逻辑。
+- `Views/MainWindow.axaml`：展示主界面、命令按钮、架构说明与封装后的 Lottie 控件。
+- `Views/MainWindow.axaml.cs`：仅提供主窗口初始化与 ViewModel 注入。
+- `DependencyInjection/ServiceCollectionExtensions.cs`：注册 UI 层窗口与视图模型的瞬时生命周期。
 
 ### Contracts
 
@@ -202,6 +215,7 @@ Zeye.RfidReader.Workbench
 
 - `RfidReaderEnumsTests.cs`：验证 Contracts 枚举描述特性。
 - `RfidReadersOptionsTests.cs`：验证 Application 配置默认值。
+- `MainWindowViewModelTests.cs`：验证 Avalonia 主窗口视图模型命令行为。
 - `RfidReaderDriverRegistryTests.cs`：验证 Infrastructure 驱动注册表行为。
 
 ## 分层依赖关系
@@ -247,23 +261,28 @@ Avalonia
 - 建立 Domain、Application、Infrastructure、Contracts、Avalonia 分层项目。
 - 将共享枚举、接口与事件载荷统一迁移到 `Contracts`。
 - 修正 Avalonia 启动流程，移除 `Program.cs` 中的全局静态容器暴露。
-- 新增适用于 Avalonia `12.0.2` 的 Lottie 动画占位。
+- 新增基于 `CommunityToolkit.Mvvm 8.4.2` 的 Avalonia MVVM 视图模型基线。
+- 新增适用于 Avalonia `12.0.2` 的 Lottie 动画封装控件。
 - 新增 GitHub Actions CI 工作流与架构门禁检查。
 - 保持当前阶段不实现真实 RFID 业务通信。
 
 ## 本次更新内容
 
-- 新增 `.github/workflows/ci.yml`，执行还原、构建、测试与架构门禁检查。
-- 将枚举、接口、事件载荷迁移到 `Contracts` 规定目录并更新引用。
-- 将设备事件载荷统一改为 `readonly record struct`。
-- 为 Avalonia 主界面接入 `Avalonia.Labs.Lottie 12.0.2` 的 `Avalonia.Labs.Lottie.Lottie` 控件与本地动画资源。
-- 将 docs 重命名为中文文件名并补充架构与借鉴说明。
+- Avalonia 项目继续固定 `Avalonia.Desktop 12.0.2` 与 `Avalonia.Themes.Fluent 12.0.2`，并接入 `CommunityToolkit.Mvvm 8.4.2`。
+- `BuildServiceProvider` 已迁移到 `Bootstrap/AvaloniaServiceProviderFactory.cs`，`App.axaml.cs` 不再直接构建容器。
+- `MainWindowViewModel` 已移除 `record class` 写法，统一继承 `ViewModelBase` 并提供启动/停止命令。
+- `MainWindow` 已删除无参构造函数，窗口与视图模型改为瞬时 DI 注册。
+- Lottie 动画已统一封装到 `Controls/RfidLottieView`，主窗口不再直接使用 `<lottie:Lottie>`。
+- 新增 `tests/Zeye.RfidReader.Workbench.Avalonia.Tests`，覆盖主窗口命令行为。
+- CI 已新增 MVVM、DI 工厂、Lottie 封装与 Avalonia.Tests 门禁。
+- 当前保留 `Avalonia.Labs.Lottie 12.0.2`，原因是它与现有 Avalonia `12.0.2` 版本保持一致，可在不引入第二套 UI/MVVM 依赖的前提下完成动画占位封装。
 
 ## 后续可完善点
 
 - 增加真实厂商 SDK 驱动适配。
 - 引入 Application 层设备编排服务与 UI 状态分发抽象。
 - 增加真实设备状态展示模型与读码统计页面。
+- 为封装控件补充更多 Avalonia UI 级测试。
 - 在接入 NLog 后补充 `archiveAboveSize="10485760"` 的实际配置与验证。
 
 ## Copilot 开发门禁
