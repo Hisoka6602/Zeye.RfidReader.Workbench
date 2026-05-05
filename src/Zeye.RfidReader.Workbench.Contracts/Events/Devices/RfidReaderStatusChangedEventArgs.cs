@@ -1,11 +1,11 @@
-using Zeye.RfidReader.Workbench.Domain.Devices;
+using Zeye.RfidReader.Workbench.Contracts.Enums.Devices;
 
-namespace Zeye.RfidReader.Workbench.Domain.Events;
+namespace Zeye.RfidReader.Workbench.Contracts.Events.Devices;
 
 /// <summary>
 /// RFID 读码器状态变更事件载荷。
 /// </summary>
-public sealed record class RfidReaderStatusChangedEventArgs
+public readonly record struct RfidReaderStatusChangedEventArgs
 {
     /// <summary>
     /// 读码器编码。

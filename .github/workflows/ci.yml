@@ -1,0 +1,123 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: Build and Test
+    runs-on: windows-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: 还原依赖
+        run: dotnet restore
+
+      - name: 构建
+        run: dotnet build --configuration Release --no-restore
+
+      - name: 测试
+        run: dotnet test --configuration Release --no-build --no-restore
+
+      - name: 架构门禁检查
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          $repoRoot = Get-Location
+          $requiredAvaloniaVersion = "12.0.2"
+          $requiredAvaloniaVersionPattern = [regex]::Escape($requiredAvaloniaVersion)
+          $desktopPattern = 'Avalonia\.Desktop"\s+Version="' + $requiredAvaloniaVersionPattern + '"'
+          $fluentPattern = 'Avalonia\.Themes\.Fluent"\s+Version="' + $requiredAvaloniaVersionPattern + '"'
+          $avaloniaProject = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/Zeye.RfidReader.Workbench.Avalonia.csproj"
+          if (!(Test-Path $avaloniaProject)) {
+            throw "未找到 Avalonia 项目文件。"
+          }
+
+          $avaloniaContent = Get-Content $avaloniaProject -Raw
+          if ($avaloniaContent -notmatch $desktopPattern) {
+            throw "Avalonia.Desktop 必须固定为 $requiredAvaloniaVersion。"
+          }
+
+          if ($avaloniaContent -notmatch $fluentPattern) {
+            throw "Avalonia.Themes.Fluent 必须固定为 $requiredAvaloniaVersion。"
+          }
+
+          if ($avaloniaContent -match 'Avalonia\.[^"]*"\s+Version="11\.') {
+            throw "禁止降级 Avalonia 到 11.x。"
+          }
+
+          $sourceFiles = Get-ChildItem -Path (Join-Path $repoRoot "src") -Recurse -Include *.cs |
+            Where-Object { $_.FullName -notmatch '\\(obj|bin)\\' }
+
+          foreach ($file in $sourceFiles) {
+            $content = Get-Content $file.FullName -Raw
+
+            if ($content -match 'new\s+MainWindowViewModel\s*\(') {
+              throw "禁止手动 new MainWindowViewModel：$($file.FullName)"
+            }
+
+            if ($content -match 'new\s+MainWindow\s*\(') {
+              throw "禁止手动 new MainWindow：$($file.FullName)"
+            }
+          }
+
+          $programFile = Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Avalonia/Program.cs"
+          if (Test-Path $programFile) {
+            $programContent = Get-Content $programFile -Raw
+            if ($programContent -match 'static\s+ServiceProvider\s+Services') {
+              throw "Program.cs 禁止暴露全局静态 ServiceProvider。"
+            }
+          }
+
+          if (!(Test-Path (Join-Path $repoRoot "README.md"))) {
+            throw "README.md 不存在。"
+          }
+
+          if (!(Test-Path (Join-Path $repoRoot ".github/copilot-instructions.md"))) {
+            throw ".github/copilot-instructions.md 不存在。"
+          }
+
+          $markdownFiles = Get-ChildItem -Path $repoRoot -Recurse -Include *.md |
+            Where-Object { $_.FullName -notmatch '\\(bin|obj|\.git)\\' }
+
+          foreach ($md in $markdownFiles) {
+            if ($md.Name -eq "README.md" -or $md.FullName -eq (Join-Path $repoRoot ".github/copilot-instructions.md")) {
+              continue
+            }
+
+            if ($md.Name -notmatch '\p{IsCJKUnifiedIdeographs}') {
+              throw "除 README.md 与 .github/copilot-instructions.md 外，md 文件名必须包含中文：$($md.FullName)"
+            }
+          }
+
+          $nlogFiles = Get-ChildItem -Path $repoRoot -Recurse -Filter nlog.config |
+            Where-Object { $_.FullName -notmatch '\\(bin|obj)\\' }
+
+          if ($nlogFiles.Count -eq 0) {
+            Write-Host "提示：当前仓库尚未接入 nlog.config，暂不执行 archiveAboveSize 阻断检查。"
+          }
+
+          foreach ($nlog in $nlogFiles) {
+            $nlogContent = Get-Content $nlog.FullName -Raw
+            if ($nlogContent -notmatch 'archiveAboveSize="10485760"') {
+              throw "NLog 文件目标必须配置 archiveAboveSize=""10485760""：$($nlog.FullName)"
+            }
+          }

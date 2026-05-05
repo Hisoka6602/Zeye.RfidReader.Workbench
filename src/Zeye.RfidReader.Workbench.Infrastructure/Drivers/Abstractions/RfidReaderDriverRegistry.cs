@@ -1,4 +1,4 @@
-using Zeye.RfidReader.Workbench.Domain.Devices;
+using Zeye.RfidReader.Workbench.Contracts.Enums.Devices;
 
 namespace Zeye.RfidReader.Workbench.Infrastructure.Drivers.Abstractions;
 

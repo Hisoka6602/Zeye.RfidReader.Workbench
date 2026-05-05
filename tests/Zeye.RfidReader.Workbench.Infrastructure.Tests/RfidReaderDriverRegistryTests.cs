@@ -1,7 +1,7 @@
 using Xunit;
-using Zeye.RfidReader.Workbench.Application.Options;
-using Zeye.RfidReader.Workbench.Domain.Abstractions;
-using Zeye.RfidReader.Workbench.Domain.Devices;
+using Zeye.RfidReader.Workbench.Contracts.Abstractions.Devices;
+using Zeye.RfidReader.Workbench.Contracts.Enums.Devices;
+using Zeye.RfidReader.Workbench.Contracts.Models.Devices;
 using Zeye.RfidReader.Workbench.Infrastructure.Drivers.Abstractions;
 using Zeye.RfidReader.Workbench.Infrastructure.Drivers.Vendors.Simulated;
 
@@ -53,6 +53,10 @@ public sealed class RfidReaderDriverRegistryTests
         Assert.Contains("未找到 RFID 读码器驱动", exception.Message);
     }
 
+    /// <summary>
+    /// 创建测试驱动描述。
+    /// </summary>
+    /// <returns>驱动描述。</returns>
     private static RfidReaderDriverDescriptor CreateDescriptor()
     {
         return new RfidReaderDriverDescriptor
@@ -64,6 +68,11 @@ public sealed class RfidReaderDriverRegistryTests
         };
     }
 
+    /// <summary>
+    /// 创建模拟会话。
+    /// </summary>
+    /// <param name="options">设备配置。</param>
+    /// <returns>模拟会话。</returns>
     private static IRfidReaderSession CreateSession(RfidReaderDeviceOptions options)
     {
         return new SimulatedRfidReaderSession(options);

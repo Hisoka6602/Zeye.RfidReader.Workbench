@@ -1,3 +1,5 @@
+using Zeye.RfidReader.Workbench.Contracts.Models.Devices;
+
 namespace Zeye.RfidReader.Workbench.Application.Options;
 
 /// <summary>

@@ -2,177 +2,207 @@
 
 ## 项目简介
 
-Zeye.RfidReader.Workbench 是 RFID 读码器工作台的架构基线工程。本阶段只建立工程分层、抽象契约、配置模型、驱动注册机制与模拟驱动骨架，不包含真实厂商 SDK、TCP 读码、串口读码、数据库或外部系统上报实现。
+Zeye.RfidReader.Workbench 是 RFID 读码器工作台的架构基线工程。本阶段聚焦契约收敛、CI 门禁、Avalonia 12.0.2 桌面骨架与 Lottie 动画接入，不包含真实厂商 SDK、TCP 读码、串口读码、数据库或外部系统上报实现。
 
 ## 当前分层结构
 
-- `Domain`：领域模型、领域枚举、领域事件载荷与读码器会话抽象，不依赖外部框架。
-- `Contracts`：跨进程或外部接口使用的数据契约，不依赖业务层项目。
-- `Application`：应用抽象、配置 Options、本地时钟抽象与驱动工厂抽象。
-- `Infrastructure`：驱动注册表、驱动工厂实现、本地时钟实现与模拟驱动骨架。
-- `Avalonia`：桌面 UI 工程骨架，只保留入口、主窗口、视图模型与目录占位。
-- `tests`：分层测试项目骨架。
+- `Contracts`：跨层共享接口、枚举、事件载荷、设备配置模型与通用契约。
+- `Application`：应用层入口与 `Options` 配置结构。
+- `Infrastructure`：驱动注册、驱动工厂、时钟实现与模拟会话。
+- `Avalonia`：桌面 UI、依赖注入组合根与 Lottie 动画展示。
+- `Domain`：纯领域对象与预留领域目录。
+- `tests`：分层测试项目。
+- `.github/workflows`：CI 工作流与架构门禁。
 
 ## 文件树
 
 ```text
 Zeye.RfidReader.Workbench
+├── .github
+│   ├── copilot-instructions.md
+│   └── workflows
+│       └── ci.yml
+├── docs
+│   ├── RFID驱动契约说明.md
+│   ├── 厂商接入指南.md
+│   └── 架构说明.md
 ├── src
-│   ├── Zeye.RfidReader.Workbench.Domain
-│   │   ├── Abstractions
-│   │   │   └── IRfidReaderSession.cs
-│   │   ├── Devices
-│   │   │   ├── RfidReaderCapability.cs
-│   │   │   ├── RfidReaderConnectionState.cs
-│   │   │   ├── RfidReaderProtocolType.cs
-│   │   │   └── RfidReaderVendorType.cs
-│   │   ├── Events
-│   │   │   ├── RfidReaderFaultedEventArgs.cs
-│   │   │   ├── RfidReaderEventHandler.cs
-│   │   │   ├── RfidReaderStatusChangedEventArgs.cs
-│   │   │   └── RfidTagReadEventArgs.cs
-│   │   ├── Tags
-│   │   │   └── RfidTag.cs
-│   │   ├── ValueObjects
-│   │   │   └── .gitkeep
-│   │   └── Zeye.RfidReader.Workbench.Domain.csproj
 │   ├── Zeye.RfidReader.Workbench.Application
-│   │   ├── Abstractions
-│   │   │   ├── ILocalClock.cs
-│   │   │   └── IRfidReaderDriverFactory.cs
 │   │   ├── DependencyInjection
 │   │   │   └── ServiceCollectionExtensions.cs
 │   │   ├── Devices
 │   │   │   └── .gitkeep
 │   │   ├── Options
-│   │   │   ├── RfidReadOptions.cs
-│   │   │   ├── RfidReaderDeviceOptions.cs
-│   │   │   ├── RfidReadersOptions.cs
-│   │   │   ├── RfidSdkConnectionOptions.cs
-│   │   │   ├── RfidSerialPortConnectionOptions.cs
-│   │   │   └── RfidTcpConnectionOptions.cs
+│   │   │   └── RfidReadersOptions.cs
 │   │   ├── Tags
 │   │   │   └── .gitkeep
-│   │   └── Zeye.RfidReader.Workbench.Application.csproj
-│   ├── Zeye.RfidReader.Workbench.Infrastructure
+│   │   ├── Zeye.RfidReader.Workbench.Application.csproj
+│   │   └── Abstractions
+│   │       └── .gitkeep
+│   ├── Zeye.RfidReader.Workbench.Avalonia
+│   │   ├── App.axaml
+│   │   ├── App.axaml.cs
+│   │   ├── Assets
+│   │   │   └── Animations
+│   │   │       └── rfid-reader-loading.json
+│   │   ├── Converters
+│   │   │   └── .gitkeep
 │   │   ├── DependencyInjection
 │   │   │   └── ServiceCollectionExtensions.cs
-│   │   ├── Drivers
-│   │   │   ├── Abstractions
-│   │   │   │   ├── RfidReaderDriverDescriptor.cs
-│   │   │   │   └── RfidReaderDriverRegistry.cs
-│   │   │   ├── Factory
-│   │   │   │   └── RfidReaderDriverFactory.cs
-│   │   │   └── Vendors
-│   │   │       └── Simulated
-│   │   │           └── SimulatedRfidReaderSession.cs
-│   │   ├── Time
-│   │   │   └── LocalClock.cs
-│   │   └── Zeye.RfidReader.Workbench.Infrastructure.csproj
+│   │   ├── Models
+│   │   │   └── .gitkeep
+│   │   ├── Program.cs
+│   │   ├── Services
+│   │   │   └── .gitkeep
+│   │   ├── ViewModels
+│   │   │   └── MainWindowViewModel.cs
+│   │   ├── Views
+│   │   │   ├── MainWindow.axaml
+│   │   │   └── MainWindow.axaml.cs
+│   │   └── Zeye.RfidReader.Workbench.Avalonia.csproj
 │   ├── Zeye.RfidReader.Workbench.Contracts
+│   │   ├── Abstractions
+│   │   │   ├── Devices
+│   │   │   │   └── IRfidReaderSession.cs
+│   │   │   ├── Drivers
+│   │   │   │   └── IRfidReaderDriverFactory.cs
+│   │   │   └── Time
+│   │   │       └── ILocalClock.cs
 │   │   ├── Common
 │   │   │   └── ApiResponse.cs
 │   │   ├── Devices
 │   │   │   └── .gitkeep
+│   │   ├── Models
+│   │   │   └── Devices
+│   │   │       ├── RfidReadOptions.cs
+│   │   │       ├── RfidReaderDeviceOptions.cs
+│   │   │       ├── RfidSdkConnectionOptions.cs
+│   │   │       ├── RfidSerialPortConnectionOptions.cs
+│   │   │       └── RfidTcpConnectionOptions.cs
+│   │   ├── Enums
+│   │   │   └── Devices
+│   │   │       ├── RfidReaderCapability.cs
+│   │   │       ├── RfidReaderConnectionState.cs
+│   │   │       ├── RfidReaderProtocolType.cs
+│   │   │       └── RfidReaderVendorType.cs
+│   │   ├── Events
+│   │   │   └── Devices
+│   │   │       ├── RfidReaderEventHandler.cs
+│   │   │       ├── RfidReaderFaultedEventArgs.cs
+│   │   │       ├── RfidReaderStatusChangedEventArgs.cs
+│   │   │       └── RfidTagReadEventArgs.cs
 │   │   ├── Tags
 │   │   │   └── RfidTagReadReportRequest.cs
 │   │   └── Zeye.RfidReader.Workbench.Contracts.csproj
-│   └── Zeye.RfidReader.Workbench.Avalonia
-│       ├── App.axaml
-│       ├── App.axaml.cs
-│       ├── Converters
-│       │   └── .gitkeep
+│   ├── Zeye.RfidReader.Workbench.Domain
+│   │   ├── Abstractions
+│   │   │   └── .gitkeep
+│   │   ├── Devices
+│   │   │   └── .gitkeep
+│   │   ├── Events
+│   │   │   └── .gitkeep
+│   │   ├── Tags
+│   │   │   └── RfidTag.cs
+│   │   ├── ValueObjects
+│   │   │   └── .gitkeep
+│   │   └── Zeye.RfidReader.Workbench.Domain.csproj
+│   └── Zeye.RfidReader.Workbench.Infrastructure
 │       ├── DependencyInjection
 │       │   └── ServiceCollectionExtensions.cs
-│       ├── Models
-│       │   └── .gitkeep
-│       ├── Program.cs
-│       ├── Services
-│       │   └── .gitkeep
-│       ├── ViewModels
-│       │   └── MainWindowViewModel.cs
-│       ├── Views
-│       │   ├── MainWindow.axaml
-│       │   └── MainWindow.axaml.cs
-│       └── Zeye.RfidReader.Workbench.Avalonia.csproj
+│       ├── Drivers
+│       │   ├── Abstractions
+│       │   │   ├── RfidReaderDriverDescriptor.cs
+│       │   │   └── RfidReaderDriverRegistry.cs
+│       │   ├── Factory
+│       │   │   └── RfidReaderDriverFactory.cs
+│       │   └── Vendors
+│       │       └── Simulated
+│       │           └── SimulatedRfidReaderSession.cs
+│       ├── Time
+│       │   └── LocalClock.cs
+│       └── Zeye.RfidReader.Workbench.Infrastructure.csproj
 ├── tests
-│   ├── Zeye.RfidReader.Workbench.Domain.Tests
-│   │   ├── RfidReaderEnumsTests.cs
-│   │   └── Zeye.RfidReader.Workbench.Domain.Tests.csproj
 │   ├── Zeye.RfidReader.Workbench.Application.Tests
 │   │   ├── RfidReadersOptionsTests.cs
 │   │   └── Zeye.RfidReader.Workbench.Application.Tests.csproj
+│   ├── Zeye.RfidReader.Workbench.Domain.Tests
+│   │   ├── RfidReaderEnumsTests.cs
+│   │   └── Zeye.RfidReader.Workbench.Domain.Tests.csproj
 │   └── Zeye.RfidReader.Workbench.Infrastructure.Tests
 │       ├── RfidReaderDriverRegistryTests.cs
 │       └── Zeye.RfidReader.Workbench.Infrastructure.Tests.csproj
-├── docs
-│   ├── architecture.md
-│   ├── rfid-driver-contract.md
-│   └── vendor-integration-guide.md
 ├── README.md
 └── Zeye.RfidReader.Workbench.sln
 ```
 
 ## 逐文件职责
 
-### Domain
+### .github
 
-- `IRfidReaderSession.cs`：定义读码器连接、断开、开始读码、停止读码与事件订阅抽象。
-- `RfidReaderVendorType.cs`：定义厂商枚举，作为多厂商扩展入口。
-- `RfidReaderProtocolType.cs`：定义 TCP、串口、厂商 SDK、HTTP 等协议类型。
-- `RfidReaderConnectionState.cs`：定义读码器连接状态。
-- `RfidReaderCapability.cs`：定义读码器能力标记。
-- `RfidTag.cs`：定义 RFID 标签领域对象。
-- `RfidTagReadEventArgs.cs`：定义标签读取事件载荷。
-- `RfidReaderEventHandler.cs`：定义 RFID 读码器事件处理委托。
-- `RfidReaderStatusChangedEventArgs.cs`：定义连接状态变化事件载荷。
-- `RfidReaderFaultedEventArgs.cs`：定义读码器故障事件载荷。
+- `.github/copilot-instructions.md`：定义仓库级 Copilot 约束与交付门禁。
+- `.github/workflows/ci.yml`：执行还原、构建、测试与架构门禁检查。
+
+### docs
+
+- `架构说明.md`：说明分层职责、契约迁移、Lottie 接入与 CI 门禁概览。
+- `RFID驱动契约说明.md`：说明会话契约、事件载荷规范与后续客户端抽象建议。
+- `厂商接入指南.md`：沉淀厂商驱动扩展边界与 ZakYip.PlcBridge 借鉴原则。
 
 ### Application
 
+- `ServiceCollectionExtensions.cs`：预留 Application 层依赖注入入口。
 - `RfidReadersOptions.cs`：定义 RFID 读码器配置根节点。
-- `RfidReaderDeviceOptions.cs`：定义单台读码器设备配置。
-- `RfidTcpConnectionOptions.cs`：定义 TCP 连接配置。
-- `RfidSerialPortConnectionOptions.cs`：定义串口连接配置。
-- `RfidSdkConnectionOptions.cs`：定义厂商 SDK 连接配置。
-- `RfidReadOptions.cs`：定义读码参数配置。
+
+### Avalonia
+
+- `Program.cs`：负责桌面应用启动。
+- `App.axaml`：提供 Avalonia 应用 XAML 骨架。
+- `App.axaml.cs`：负责组合根服务创建、主窗口解析与容器释放。
+- `Assets/Animations/rfid-reader-loading.json`：提供本地 Lottie 动画资源。
+- `ViewModels/MainWindowViewModel.cs`：提供主窗口展示文案，不承载设备通信逻辑。
+- `Views/MainWindow.axaml`：展示主界面、架构说明与 Lottie 动画占位。
+- `Views/MainWindow.axaml.cs`：提供主窗口初始化与 ViewModel 注入。
+- `DependencyInjection/ServiceCollectionExtensions.cs`：注册 UI 层窗口与视图模型。
+
+### Contracts
+
+- `ApiResponse.cs`：定义通用响应契约。
+- `IRfidReaderSession.cs`：定义读码器会话抽象。
 - `IRfidReaderDriverFactory.cs`：定义读码器驱动工厂抽象。
 - `ILocalClock.cs`：定义本地时钟抽象。
-- `ServiceCollectionExtensions.cs`：预留 Application 层依赖注入入口。
+- `RfidReaderVendorType.cs`：定义读码器厂商枚举。
+- `RfidReaderProtocolType.cs`：定义读码器协议枚举。
+- `RfidReaderConnectionState.cs`：定义读码器连接状态枚举。
+- `RfidReaderCapability.cs`：定义读码器能力标记枚举。
+- `RfidTagReadEventArgs.cs`：定义标签读取事件载荷。
+- `RfidReaderStatusChangedEventArgs.cs`：定义连接状态变化事件载荷。
+- `RfidReaderFaultedEventArgs.cs`：定义故障事件载荷。
+- `RfidReaderEventHandler.cs`：定义统一设备事件处理委托。
+- `RfidReadOptions.cs`：定义读码参数配置。
+- `RfidReaderDeviceOptions.cs`：定义单台读码器设备配置。
+- `RfidSdkConnectionOptions.cs`：定义厂商 SDK 连接配置。
+- `RfidSerialPortConnectionOptions.cs`：定义串口连接配置。
+- `RfidTcpConnectionOptions.cs`：定义 TCP 连接配置。
+- `RfidTagReadReportRequest.cs`：定义标签读取上报请求契约。
+
+### Domain
+
+- `RfidTag.cs`：定义 RFID 标签领域对象。
 
 ### Infrastructure
 
+- `ServiceCollectionExtensions.cs`：注册 Infrastructure 服务与模拟驱动描述。
 - `RfidReaderDriverDescriptor.cs`：定义驱动描述与会话创建委托。
 - `RfidReaderDriverRegistry.cs`：维护驱动注册表并提供必需驱动查询。
 - `RfidReaderDriverFactory.cs`：根据设备配置创建读码器会话。
 - `SimulatedRfidReaderSession.cs`：提供模拟读码器会话骨架，不生成模拟标签。
 - `LocalClock.cs`：提供本地系统时间。
-- `ServiceCollectionExtensions.cs`：注册 Infrastructure 服务与模拟驱动描述。
-
-### Contracts
-
-- `ApiResponse.cs`：定义通用响应契约。
-- `RfidTagReadReportRequest.cs`：定义标签读取上报请求契约。
-
-### Avalonia
-
-- `Program.cs`：提供桌面工程入口与依赖注入容器初始化。
-- `App.axaml`：提供 Avalonia 应用 XAML 骨架。
-- `App.axaml.cs`：提供应用初始化与主窗口依赖解析入口。
-- `Views/MainWindow.axaml`：提供主窗口 XAML 骨架与 ViewModel 标题绑定。
-- `Views/MainWindow.axaml.cs`：提供主窗口初始化，并通过构造函数注入 ViewModel。
-- `ViewModels/MainWindowViewModel.cs`：提供主窗口视图模型占位，不包含 RFID 通信逻辑。
-- `DependencyInjection/ServiceCollectionExtensions.cs`：注册 UI 层窗口与视图模型，并由容器完成装配。
-- `Services/.gitkeep`、`Models/.gitkeep`、`Converters/.gitkeep`：保留 UI 层目录结构。
 
 ### Tests
 
-- `RfidReaderEnumsTests.cs`：验证 Domain 枚举描述特性。
+- `RfidReaderEnumsTests.cs`：验证 Contracts 枚举描述特性。
 - `RfidReadersOptionsTests.cs`：验证 Application 配置默认值。
 - `RfidReaderDriverRegistryTests.cs`：验证 Infrastructure 驱动注册表行为。
-- `Zeye.RfidReader.Workbench.Domain.Tests.csproj`：Domain 层测试项目。
-- `Zeye.RfidReader.Workbench.Application.Tests.csproj`：Application 层测试项目。
-- `Zeye.RfidReader.Workbench.Infrastructure.Tests.csproj`：Infrastructure 层测试项目。
 
 ## 分层依赖关系
 
@@ -184,12 +214,10 @@ Contracts
     无业务层项目依赖
 
 Application
-    -> Domain
     -> Contracts
 
 Infrastructure
     -> Application
-    -> Domain
     -> Contracts
 
 Avalonia
@@ -200,49 +228,43 @@ Avalonia
 
 禁止依赖方向：
 
-- `Domain -> Application / Infrastructure / Avalonia`
+- `Domain -> Application / Infrastructure / Avalonia / Contracts`
 - `Application -> Infrastructure / Avalonia`
-- `Contracts -> Application / Infrastructure / Avalonia`
+- `Contracts -> Application / Infrastructure / Avalonia / Domain`
 - `Infrastructure -> Avalonia`
 - `Avalonia -> 具体厂商 SDK`
 
 ## 多厂商 RFID 驱动接入规则
 
-新增厂商驱动时，只能新增 Infrastructure/Drivers/Vendors/{VendorName} 下的驱动实现和注册逻辑。
-不得修改 Domain 领域模型来适配某个厂商。
-不得在 Avalonia 层直接引用厂商 SDK。
-不得在 Application 层写 if vendor == xxx 的厂商分支。
-不得保留默认 Class1.cs。
-新增、删除、移动文件后必须同步更新 README.md 文件树与逐文件职责。
+- 新增厂商驱动时，只能新增 `Infrastructure/Drivers/Vendors/{VendorName}` 下的驱动实现和注册逻辑。
+- 不得修改 Contracts 契约来适配单个厂商。
+- 不得在 Avalonia 层直接引用厂商 SDK。
+- 不得在 Application 层写 `if vendor == xxx` 的厂商分支。
+- 新增、删除、移动文件后必须同步更新 README.md 文件树与逐文件职责。
 
 ## 当前已实现能力
 
 - 建立 Domain、Application、Infrastructure、Contracts、Avalonia 分层项目。
-- 将 Contracts 项目移动到 `src` 目录。
-- 删除默认 `Class1.cs`。
-- 定义 RFID 读码器基础枚举、事件载荷、标签对象与会话抽象。
-- 定义 Options、驱动工厂抽象、本地时钟抽象。
-- 定义驱动注册表、驱动工厂实现、本地时钟实现与模拟驱动骨架。
-- 创建 Avalonia 工程骨架目录与主窗口占位。
-- 创建测试项目骨架。
-- 增加分层最小单元测试。
-
-## 后续待实现能力
-
-- 增加真实厂商 SDK 驱动适配。
-- 增加 TCP 与串口读码驱动实现。
-- 增加配置加载、设备生命周期管理与读码编排服务。
-- 增加标签去重、读码统计与异常恢复策略。
-- 增加最小 UI 页面、设备状态展示与配置入口。
-- 增加数据库持久化与 WCS/ERP/MES 上报适配。
+- 将共享枚举、接口与事件载荷统一迁移到 `Contracts`。
+- 修正 Avalonia 启动流程，移除 `Program.cs` 中的全局静态容器暴露。
+- 新增适用于 Avalonia `12.0.2` 的 Lottie 动画占位。
+- 新增 GitHub Actions CI 工作流与架构门禁检查。
+- 保持当前阶段不实现真实 RFID 业务通信。
 
 ## 本次更新内容
 
-- 初始化标准 `src` 与 `tests` 工程结构。
-- 新增 Domain、Application、Infrastructure、Avalonia、Contracts 基础文件。
-- 新增 README 与 docs 架构说明。
-- 注册模拟 RFID 读码器驱动描述。
-- 保证当前阶段不实现真实 RFID 业务通信。
+- 新增 `.github/workflows/ci.yml`，执行还原、构建、测试与架构门禁检查。
+- 将枚举、接口、事件载荷迁移到 `Contracts` 规定目录并更新引用。
+- 将设备事件载荷统一改为 `readonly record struct`。
+- 为 Avalonia 主界面接入 `Avalonia.Labs.Lottie 12.0.2` 的 `Avalonia.Labs.Lottie.Lottie` 控件与本地动画资源。
+- 将 docs 重命名为中文文件名并补充架构与借鉴说明。
+
+## 后续可完善点
+
+- 增加真实厂商 SDK 驱动适配。
+- 引入 Application 层设备编排服务与 UI 状态分发抽象。
+- 增加真实设备状态展示模型与读码统计页面。
+- 在接入 NLog 后补充 `archiveAboveSize="10485760"` 的实际配置与验证。
 
 ## Copilot 开发门禁
 
@@ -250,12 +272,10 @@ Avalonia
 - 注释中禁止出现第二人称字眼。
 - 类名、字段名、变量名禁止中文。
 - DTO、Options、Contract 优先使用 `record class`。
-- 事件载荷必须使用 `record struct` 或 `record class`，名称以 `EventArgs` 结尾。
+- 事件载荷必须使用 `readonly record struct`。
 - 布尔属性必须使用 `Is` / `Has` / `Can` / `Should` 前缀。
 - enum 必须带 `Description` 特性，每个枚举项必须有 XML 注释。
 - 时间统一使用本地时间语义，属性命名必须带 `Local`。
 - 异常提示使用中文。
 - 不得把业务逻辑放入 Avalonia ViewModel。
 - 不得把设备通信实现放入 Application。
-- Domain 禁止依赖外部框架。
-- 新增、删除、移动文件后必须同步更新 README.md 文件树与逐文件职责。

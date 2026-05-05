@@ -1,7 +1,7 @@
-using Zeye.RfidReader.Workbench.Application.Options;
-using Zeye.RfidReader.Workbench.Domain.Abstractions;
+using Zeye.RfidReader.Workbench.Contracts.Abstractions.Devices;
+using Zeye.RfidReader.Workbench.Contracts.Models.Devices;
 
-namespace Zeye.RfidReader.Workbench.Application.Abstractions;
+namespace Zeye.RfidReader.Workbench.Contracts.Abstractions.Drivers;
 
 /// <summary>
 /// RFID 读码器驱动工厂抽象。
