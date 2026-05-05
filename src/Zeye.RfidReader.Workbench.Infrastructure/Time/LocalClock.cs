@@ -1,4 +1,4 @@
-using Zeye.RfidReader.Workbench.Application.Abstractions;
+using Zeye.RfidReader.Workbench.Contracts.Abstractions.Time;
 
 namespace Zeye.RfidReader.Workbench.Infrastructure.Time;
 

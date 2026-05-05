@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Zeye.RfidReader.Workbench.Domain.Devices;
+namespace Zeye.RfidReader.Workbench.Contracts.Enums.Devices;
 
 /// <summary>
 /// RFID 读码器厂商类型。

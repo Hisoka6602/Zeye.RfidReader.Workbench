@@ -1,6 +1,6 @@
 using Zeye.RfidReader.Workbench.Application.Options;
-using Zeye.RfidReader.Workbench.Domain.Abstractions;
-using Zeye.RfidReader.Workbench.Domain.Events;
+using Zeye.RfidReader.Workbench.Contracts.Abstractions.Devices;
+using Zeye.RfidReader.Workbench.Contracts.Events.Devices;
 
 namespace Zeye.RfidReader.Workbench.Infrastructure.Drivers.Vendors.Simulated;
 

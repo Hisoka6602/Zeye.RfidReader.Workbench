@@ -1,7 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Zeye.RfidReader.Workbench.Domain\Zeye.RfidReader.Workbench.Domain.csproj" />
     <ProjectReference Include="..\Zeye.RfidReader.Workbench.Contracts\Zeye.RfidReader.Workbench.Contracts.csproj" />
   </ItemGroup>
 

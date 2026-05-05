@@ -1,4 +1,4 @@
-namespace Zeye.RfidReader.Workbench.Application.Abstractions;
+namespace Zeye.RfidReader.Workbench.Contracts.Abstractions.Time;
 
 /// <summary>
 /// 本地时钟抽象。

@@ -1,6 +1,6 @@
-using Zeye.RfidReader.Workbench.Domain.Events;
+using Zeye.RfidReader.Workbench.Contracts.Events.Devices;
 
-namespace Zeye.RfidReader.Workbench.Domain.Abstractions;
+namespace Zeye.RfidReader.Workbench.Contracts.Abstractions.Devices;
 
 /// <summary>
 /// RFID 读码器会话抽象。

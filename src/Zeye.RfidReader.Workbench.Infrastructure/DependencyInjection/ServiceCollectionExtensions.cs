@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using Zeye.RfidReader.Workbench.Application.Abstractions;
-using Zeye.RfidReader.Workbench.Domain.Devices;
+using Zeye.RfidReader.Workbench.Contracts.Abstractions.Drivers;
+using Zeye.RfidReader.Workbench.Contracts.Abstractions.Time;
+using Zeye.RfidReader.Workbench.Contracts.Enums.Devices;
 using Zeye.RfidReader.Workbench.Infrastructure.Drivers.Abstractions;
 using Zeye.RfidReader.Workbench.Infrastructure.Drivers.Factory;
 using Zeye.RfidReader.Workbench.Infrastructure.Drivers.Vendors.Simulated;
@@ -27,6 +28,10 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>
+    /// 创建默认驱动注册表。
+    /// </summary>
+    /// <returns>驱动注册表。</returns>
     private static RfidReaderDriverRegistry CreateRegistry()
     {
         var registry = new RfidReaderDriverRegistry();

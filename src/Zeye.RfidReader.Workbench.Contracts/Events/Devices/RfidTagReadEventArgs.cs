@@ -1,9 +1,9 @@
-namespace Zeye.RfidReader.Workbench.Domain.Events;
+namespace Zeye.RfidReader.Workbench.Contracts.Events.Devices;
 
 /// <summary>
 /// RFID 标签读取事件载荷。
 /// </summary>
-public sealed record class RfidTagReadEventArgs
+public readonly record struct RfidTagReadEventArgs
 {
     /// <summary>
     /// 读码器编码。
