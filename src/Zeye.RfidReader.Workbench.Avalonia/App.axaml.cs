@@ -23,8 +23,17 @@ public sealed partial class App : global::Avalonia.Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = Program.Services.GetRequiredService<MainWindow>();
+            desktop.Exit += OnDesktopExit;
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private static void OnDesktopExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
+    {
+        if (Program.Services is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
     }
 }

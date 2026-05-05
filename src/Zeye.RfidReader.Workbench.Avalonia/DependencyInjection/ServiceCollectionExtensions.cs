@@ -17,10 +17,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddRfidReaderWorkbenchAvalonia(this IServiceCollection services)
     {
         services.AddSingleton<MainWindowViewModel>();
-        services.AddSingleton<MainWindow>(serviceProvider => new MainWindow
-        {
-            DataContext = serviceProvider.GetRequiredService<MainWindowViewModel>(),
-        });
+        services.AddSingleton<MainWindow>();
 
         return services;
     }

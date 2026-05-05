@@ -30,6 +30,6 @@ internal static class Program
         services.AddRfidReaderWorkbenchApplication();
         services.AddRfidReaderWorkbenchInfrastructure();
         services.AddRfidReaderWorkbenchAvalonia();
-        return services.BuildServiceProvider();
+        return services.BuildServiceProvider(validateScopes: true);
     }
 }
