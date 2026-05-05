@@ -111,6 +111,43 @@ jobs:
             }
           }
 
+          $requiredAvaloniaServiceInterfaces = @(
+            "src/Zeye.RfidReader.Workbench.Avalonia/Services/IAppNavigationService.cs",
+            "src/Zeye.RfidReader.Workbench.Avalonia/Services/IDialogService.cs",
+            "src/Zeye.RfidReader.Workbench.Avalonia/Services/IToastNotificationService.cs",
+            "src/Zeye.RfidReader.Workbench.Avalonia/Services/IUiDispatcher.cs"
+          )
+
+          foreach ($requiredInterface in $requiredAvaloniaServiceInterfaces) {
+            $path = Join-Path $repoRoot $requiredInterface
+            if (!(Test-Path $path)) {
+              throw "UI 私有接口必须保留在 Avalonia/Services：$requiredInterface"
+            }
+          }
+
+          $contractsFiles = Get-ChildItem -Path (Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Contracts") -Recurse -Include *.cs |
+            Where-Object { $_.FullName -notmatch '\\(obj|bin)\\' }
+
+          foreach ($file in $contractsFiles) {
+            $content = Get-Content $file.FullName -Raw
+
+            if ($content -match 'interface\s+IAppNavigationService') {
+              throw "IAppNavigationService 是 UI 私有接口，禁止放入 Contracts：$($file.FullName)"
+            }
+
+            if ($content -match 'interface\s+IDialogService') {
+              throw "IDialogService 是 UI 私有接口，禁止放入 Contracts：$($file.FullName)"
+            }
+
+            if ($content -match 'interface\s+IToastNotificationService') {
+              throw "IToastNotificationService 是 UI 私有接口，禁止放入 Contracts：$($file.FullName)"
+            }
+
+            if ($content -match 'interface\s+IUiDispatcher') {
+              throw "IUiDispatcher 是 UI 私有接口，禁止放入 Contracts：$($file.FullName)"
+            }
+          }
+
           $sourceFiles = Get-ChildItem -Path (Join-Path $repoRoot "src") -Recurse -Include *.cs |
             Where-Object { $_.FullName -notmatch '\\(obj|bin)\\' }
 
@@ -123,6 +160,28 @@ jobs:
 
             if ($content -match 'new\s+MainWindow\s*\(') {
               throw "禁止手动 new MainWindow：$($file.FullName)"
+            }
+          }
+
+          $nonAvaloniaSourceFiles = Get-ChildItem -Path (Join-Path $repoRoot "src") -Recurse -Include *.cs |
+            Where-Object {
+              $_.FullName -notmatch '\\(obj|bin)\\' -and
+              $_.FullName -notmatch 'Zeye\.RfidReader\.Workbench\.Avalonia'
+            }
+
+          foreach ($file in $nonAvaloniaSourceFiles) {
+            $content = Get-Content $file.FullName -Raw
+
+            if ($content -match 'using\s+Zeye\.RfidReader\.Workbench\.Avalonia\.Services') {
+              throw "非 Avalonia 项目禁止引用 Avalonia.Services：$($file.FullName)"
+            }
+
+            if ($content -match 'using\s+Zeye\.RfidReader\.Workbench\.Avalonia\.ViewModels') {
+              throw "非 Avalonia 项目禁止引用 Avalonia.ViewModels：$($file.FullName)"
+            }
+
+            if ($content -match 'using\s+Zeye\.RfidReader\.Workbench\.Avalonia\.Views') {
+              throw "非 Avalonia 项目禁止引用 Avalonia.Views：$($file.FullName)"
             }
           }
 
@@ -179,6 +238,10 @@ jobs:
 
           foreach ($viewModelFile in $avaloniaViewModels) {
             $viewModelFileContent = Get-Content $viewModelFile.FullName -Raw
+            if ($viewModelFileContent -match 'using\s+Zeye\.RfidReader\.Workbench\.Infrastructure') {
+              throw "Avalonia ViewModel 禁止引用 Infrastructure：$($viewModelFile.FullName)"
+            }
+
             if ($viewModelFileContent -match 'new\s+SimulatedRfidReaderSession\s*\(') {
               throw "Avalonia ViewModel 禁止直接创建 SimulatedRfidReaderSession：$($viewModelFile.FullName)"
             }

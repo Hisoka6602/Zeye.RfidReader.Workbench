@@ -33,7 +33,17 @@
 31. Host 中 Swagger 内容必须放到 `Zeye.RfidReader.Workbench.Host.Swagger`。
 32. Host 中端点相关内容必须放到对应端点目录。
 33. Host 中厂商相关内容必须放到 `Zeye.RfidReader.Workbench.Host.Vendors`。
-34. 所有 interface 都必须定义在 `Zeye.RfidReader.Workbench.Contracts` 的子目录下面（强制，不允许在其他项目定义接口）。
+34. 跨层共享接口必须定义在 `Zeye.RfidReader.Workbench.Contracts/Abstractions` 的子目录下面；仅服务于 Avalonia UI 层的私有接口允许定义在 `Zeye.RfidReader.Workbench.Avalonia/Services` 的子目录下面。
+    - 跨层共享接口示例：`IRfidReaderSession`、`IRfidReaderDriverFactory`、`ILocalClock`
+    - UI 私有接口示例：`IAppNavigationService`、`IDialogService`、`IToastNotificationService`、`IUiDispatcher`
+    - 判断规则：
+      1. 如果接口会被多个项目共享，必须放入 `Contracts/Abstractions`
+      2. 如果接口只服务于 Avalonia UI 层，并且依赖 UI 概念、页面、弹窗、导航、UI 线程、通知展示，则允许放在 `Avalonia/Services`
+      3. Domain 禁止引用 Avalonia
+      4. Application 禁止引用 Avalonia
+      5. Infrastructure 禁止引用 Avalonia
+      6. Contracts 禁止引用 Avalonia
+    - UI 私有接口不得迁移到 Contracts，跨层业务接口不得放在 Avalonia
 35. 所有静态工具类都必须定义在 `Zeye.RfidReader.Workbench.Contracts.Utilities` 目录或其子目录下面（强制，框架扩展入口类除外）。
 36. 禁止在热路径读写配置文件和数据库
 37. 每个配置项的注释都需要写明可填写的范围，枚举类型需要列出所有枚举项
