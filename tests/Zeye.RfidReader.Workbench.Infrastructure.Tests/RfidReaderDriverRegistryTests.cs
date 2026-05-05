@@ -1,7 +1,7 @@
 using Xunit;
-using Zeye.RfidReader.Workbench.Application.Options;
 using Zeye.RfidReader.Workbench.Contracts.Abstractions.Devices;
 using Zeye.RfidReader.Workbench.Contracts.Enums.Devices;
+using Zeye.RfidReader.Workbench.Contracts.Models.Devices;
 using Zeye.RfidReader.Workbench.Infrastructure.Drivers.Abstractions;
 using Zeye.RfidReader.Workbench.Infrastructure.Drivers.Vendors.Simulated;
 

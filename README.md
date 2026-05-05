@@ -6,7 +6,7 @@ Zeye.RfidReader.Workbench 是 RFID 读码器工作台的架构基线工程。本
 
 ## 当前分层结构
 
-- `Contracts`：跨层共享接口、枚举、事件载荷与通用契约。
+- `Contracts`：跨层共享接口、枚举、事件载荷、设备配置模型与通用契约。
 - `Application`：应用层入口与 `Options` 配置结构。
 - `Infrastructure`：驱动注册、驱动工厂、时钟实现与模拟会话。
 - `Avalonia`：桌面 UI、依赖注入组合根与 Lottie 动画展示。
@@ -33,12 +33,7 @@ Zeye.RfidReader.Workbench
 │   │   ├── Devices
 │   │   │   └── .gitkeep
 │   │   ├── Options
-│   │   │   ├── RfidReadOptions.cs
-│   │   │   ├── RfidReaderDeviceOptions.cs
-│   │   │   ├── RfidReadersOptions.cs
-│   │   │   ├── RfidSdkConnectionOptions.cs
-│   │   │   ├── RfidSerialPortConnectionOptions.cs
-│   │   │   └── RfidTcpConnectionOptions.cs
+│   │   │   └── RfidReadersOptions.cs
 │   │   ├── Tags
 │   │   │   └── .gitkeep
 │   │   ├── Zeye.RfidReader.Workbench.Application.csproj
@@ -77,6 +72,13 @@ Zeye.RfidReader.Workbench
 │   │   │   └── ApiResponse.cs
 │   │   ├── Devices
 │   │   │   └── .gitkeep
+│   │   ├── Models
+│   │   │   └── Devices
+│   │   │       ├── RfidReadOptions.cs
+│   │   │       ├── RfidReaderDeviceOptions.cs
+│   │   │       ├── RfidSdkConnectionOptions.cs
+│   │   │       ├── RfidSerialPortConnectionOptions.cs
+│   │   │       └── RfidTcpConnectionOptions.cs
 │   │   ├── Enums
 │   │   │   └── Devices
 │   │   │       ├── RfidReaderCapability.cs
@@ -150,11 +152,6 @@ Zeye.RfidReader.Workbench
 
 - `ServiceCollectionExtensions.cs`：预留 Application 层依赖注入入口。
 - `RfidReadersOptions.cs`：定义 RFID 读码器配置根节点。
-- `RfidReaderDeviceOptions.cs`：定义单台读码器设备配置。
-- `RfidTcpConnectionOptions.cs`：定义 TCP 连接配置。
-- `RfidSerialPortConnectionOptions.cs`：定义串口连接配置。
-- `RfidSdkConnectionOptions.cs`：定义厂商 SDK 连接配置。
-- `RfidReadOptions.cs`：定义读码参数配置。
 
 ### Avalonia
 
@@ -181,6 +178,11 @@ Zeye.RfidReader.Workbench
 - `RfidReaderStatusChangedEventArgs.cs`：定义连接状态变化事件载荷。
 - `RfidReaderFaultedEventArgs.cs`：定义故障事件载荷。
 - `RfidReaderEventHandler.cs`：定义统一设备事件处理委托。
+- `RfidReadOptions.cs`：定义读码参数配置。
+- `RfidReaderDeviceOptions.cs`：定义单台读码器设备配置。
+- `RfidSdkConnectionOptions.cs`：定义厂商 SDK 连接配置。
+- `RfidSerialPortConnectionOptions.cs`：定义串口连接配置。
+- `RfidTcpConnectionOptions.cs`：定义 TCP 连接配置。
 - `RfidTagReadReportRequest.cs`：定义标签读取上报请求契约。
 
 ### Domain
@@ -254,7 +256,7 @@ Avalonia
 - 新增 `.github/workflows/ci.yml`，执行还原、构建、测试与架构门禁检查。
 - 将枚举、接口、事件载荷迁移到 `Contracts` 规定目录并更新引用。
 - 将设备事件载荷统一改为 `readonly record struct`。
-- 为 Avalonia 主界面接入 `Avalonia.Labs.Lottie 12.0.2` 与本地动画资源。
+- 为 Avalonia 主界面接入 `Avalonia.Labs.Lottie 12.0.2（`Avalonia.Labs.Lottie.Lottie` 控件）` 与本地动画资源。
 - 将 docs 重命名为中文文件名并补充架构与借鉴说明。
 
 ## 后续可完善点

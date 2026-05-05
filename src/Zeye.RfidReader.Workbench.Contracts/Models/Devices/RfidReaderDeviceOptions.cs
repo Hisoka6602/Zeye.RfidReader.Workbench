@@ -1,6 +1,6 @@
 using Zeye.RfidReader.Workbench.Contracts.Enums.Devices;
 
-namespace Zeye.RfidReader.Workbench.Application.Options;
+namespace Zeye.RfidReader.Workbench.Contracts.Models.Devices;
 
 /// <summary>
 /// RFID 读码器设备配置。

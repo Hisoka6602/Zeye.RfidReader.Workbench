@@ -22,11 +22,11 @@
         <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="24">
             <Border Padding="24" Background="#0F3D4F62" CornerRadius="16">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
-                    <lottie:LottieView Width="280"
-                                       Height="280"
-                                       AutoPlay="True"
-                                       Loop="True"
-                                       Source="avares://Zeye.RfidReader.Workbench.Avalonia/Assets/Animations/rfid-reader-loading.json" />
+                    <lottie:Lottie Width="280"
+                                  Height="280"
+                                  AutoPlay="True"
+                                  RepeatCount="-1"
+                                  Path="avares://Zeye.RfidReader.Workbench.Avalonia/Assets/Animations/rfid-reader-loading.json" />
                     <TextBlock HorizontalAlignment="Center" FontSize="16" FontWeight="SemiBold" Text="RFID 动画占位" />
                 </StackPanel>
             </Border>
