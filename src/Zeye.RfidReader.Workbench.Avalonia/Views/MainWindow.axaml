@@ -1,0 +1,10 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Zeye.RfidReader.Workbench.Avalonia.ViewModels"
+        x:Class="Zeye.RfidReader.Workbench.Avalonia.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Zeye RFID Reader Workbench"
+        Width="960"
+        Height="640">
+    <TextBlock Text="Zeye RFID Reader Workbench" />
+</Window>
