@@ -10,6 +10,9 @@ namespace Zeye.RfidReader.Workbench.Infrastructure.Drivers.Vendors.Simulated;
 public sealed class SimulatedRfidReaderSession : IRfidReaderSession
 {
     private readonly RfidReaderDeviceOptions _options;
+    private EventHandler<RfidTagReadEventArgs>? _tagRead;
+    private EventHandler<RfidReaderStatusChangedEventArgs>? _statusChanged;
+    private EventHandler<RfidReaderFaultedEventArgs>? _faulted;
 
     /// <summary>
     /// 初始化模拟 RFID 读码器会话实例。
@@ -27,13 +30,25 @@ public sealed class SimulatedRfidReaderSession : IRfidReaderSession
     public bool IsConnected { get; private set; }
 
     /// <inheritdoc />
-    public event EventHandler<RfidTagReadEventArgs>? TagRead;
+    public event EventHandler<RfidTagReadEventArgs>? TagRead
+    {
+        add => _tagRead += value;
+        remove => _tagRead -= value;
+    }
 
     /// <inheritdoc />
-    public event EventHandler<RfidReaderStatusChangedEventArgs>? StatusChanged;
+    public event EventHandler<RfidReaderStatusChangedEventArgs>? StatusChanged
+    {
+        add => _statusChanged += value;
+        remove => _statusChanged -= value;
+    }
 
     /// <inheritdoc />
-    public event EventHandler<RfidReaderFaultedEventArgs>? Faulted;
+    public event EventHandler<RfidReaderFaultedEventArgs>? Faulted
+    {
+        add => _faulted += value;
+        remove => _faulted -= value;
+    }
 
     /// <inheritdoc />
     public ValueTask ConnectAsync(CancellationToken cancellationToken = default)
