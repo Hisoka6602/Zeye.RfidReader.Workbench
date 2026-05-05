@@ -16,5 +16,21 @@ public sealed partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = viewModel;
+        Closed += OnClosed;
+    }
+
+    /// <summary>
+    /// 处理窗口关闭后的资源释放。
+    /// </summary>
+    /// <param name="sender">事件发送方。</param>
+    /// <param name="e">事件参数。</param>
+    private void OnClosed(object? sender, EventArgs e)
+    {
+        Closed -= OnClosed;
+
+        if (DataContext is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
     }
 }

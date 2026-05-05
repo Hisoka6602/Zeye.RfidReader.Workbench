@@ -8,13 +8,14 @@ namespace Zeye.RfidReader.Workbench.Avalonia.ViewModels;
 /// <summary>
 /// 主窗口视图模型。
 /// </summary>
-public sealed partial class MainWindowViewModel : ViewModelBase
+public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 {
     private const string DefaultLottieAnimationPath = "avares://Zeye.RfidReader.Workbench.Avalonia/Assets/Animations/rfid-reader-loading.json";
     private const string StartedStatusText = "读码已启动";
     private const string StoppedStatusText = "读码已停止";
 
     private readonly IAppNavigationService _navigationService;
+    private int _disposeState;
 
     /// <summary>
     /// 初始化主窗口视图模型。
@@ -144,5 +145,28 @@ public sealed partial class MainWindowViewModel : ViewModelBase
     private void OnCurrentViewModelChanged(object? sender, ViewModelBase? viewModel)
     {
         CurrentViewModel = viewModel;
+    }
+
+    /// <summary>
+    /// 释放主窗口视图模型资源。
+    /// </summary>
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// 释放主窗口视图模型资源。
+    /// </summary>
+    /// <param name="disposing">是否正在释放托管资源。</param>
+    private void Dispose(bool disposing)
+    {
+        if (!disposing || Interlocked.Exchange(ref _disposeState, 1) != 0)
+        {
+            return;
+        }
+
+        _navigationService.CurrentViewModelChanged -= OnCurrentViewModelChanged;
     }
 }

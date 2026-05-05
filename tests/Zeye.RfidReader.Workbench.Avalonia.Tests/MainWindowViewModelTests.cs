@@ -66,4 +66,20 @@ public sealed class MainWindowViewModelTests
         Assert.False(viewModel.IsRunning);
         Assert.Equal("读码已停止", viewModel.StatusText);
     }
+
+    /// <summary>
+    /// 释放后不应继续响应导航事件。
+    /// </summary>
+    [Fact]
+    public void Dispose_ShouldUnsubscribeFromNavigationService()
+    {
+        using var serviceProvider = TestServiceProviderFactory.Create();
+        var navigationService = serviceProvider.GetRequiredService<IAppNavigationService>();
+        var viewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
+
+        viewModel.Dispose();
+        navigationService.NavigateTo(PageKeys.ReaderMonitor);
+
+        Assert.IsType<DashboardViewModel>(viewModel.CurrentViewModel);
+    }
 }
