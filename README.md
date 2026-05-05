@@ -318,8 +318,9 @@ Avalonia
    - `IDialogService`
    - `IToastNotificationService`
    - `IUiDispatcher`
-4. UI 私有接口不得被 `Application`、`Infrastructure`、`Domain`、`Contracts` 引用。
-5. 跨层业务接口不得放在 `Avalonia`。
+4. 当前仅由 Avalonia 使用、但未来可能跨层共享的接口，也应优先放在 `Contracts/Abstractions`。
+5. UI 私有接口不得被 `Application`、`Infrastructure`、`Domain`、`Contracts` 引用。
+6. 跨层业务接口不得放在 `Avalonia`。
 
 ## 验收命令
 
