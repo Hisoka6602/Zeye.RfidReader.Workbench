@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Zeye.RfidReader.Workbench.Avalonia.Models;
 using Zeye.RfidReader.Workbench.Avalonia.Services;
@@ -15,20 +16,22 @@ public sealed class ToastNotificationServiceTests
     [Fact]
     public void ShowInfo_ShouldRaiseNotificationReceived()
     {
-        var service = new ToastNotificationService();
-        var startTime = DateTime.Now;
+        using var serviceProvider = TestServiceProviderFactory.Create();
+        var service = serviceProvider.GetRequiredService<IToastNotificationService>();
+        var startTime = DateTime.Now.AddSeconds(-1);
         UiNotificationModel? notification = null;
 
         service.NotificationReceived += OnNotificationReceived;
-
         service.ShowInfo("提示", "UI 底座已准备完成");
+        var endTime = DateTime.Now.AddSeconds(1);
 
         Assert.NotNull(notification);
         Assert.Equal("提示", notification!.Title);
         Assert.Equal("UI 底座已准备完成", notification.Message);
         Assert.False(notification.IsError);
-        Assert.InRange(notification.OccurredTimeLocal, startTime, DateTime.Now);
+        Assert.InRange(notification.OccurredTimeLocal, startTime, endTime);
         service.NotificationReceived -= OnNotificationReceived;
+
         return;
 
         /// <summary>

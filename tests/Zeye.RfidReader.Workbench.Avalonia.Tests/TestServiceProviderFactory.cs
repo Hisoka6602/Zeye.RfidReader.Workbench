@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Zeye.RfidReader.Workbench.Avalonia.DependencyInjection;
+using Zeye.RfidReader.Workbench.Infrastructure.DependencyInjection;
 
 namespace Zeye.RfidReader.Workbench.Avalonia.Tests;
 
@@ -15,6 +16,7 @@ internal static class TestServiceProviderFactory
     public static ServiceProvider Create()
     {
         var services = new ServiceCollection();
+        services.AddRfidReaderWorkbenchInfrastructure();
         services.AddRfidReaderWorkbenchAvalonia();
         return services.BuildServiceProvider();
     }

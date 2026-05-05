@@ -1,4 +1,5 @@
 using Zeye.RfidReader.Workbench.Avalonia.Models;
+using Zeye.RfidReader.Workbench.Contracts.Abstractions.Time;
 
 namespace Zeye.RfidReader.Workbench.Avalonia.Services;
 
@@ -7,6 +8,17 @@ namespace Zeye.RfidReader.Workbench.Avalonia.Services;
 /// </summary>
 public sealed class ToastNotificationService : IToastNotificationService
 {
+    private readonly ILocalClock _localClock;
+
+    /// <summary>
+    /// 初始化 Toast 通知服务。
+    /// </summary>
+    /// <param name="localClock">本地时钟。</param>
+    public ToastNotificationService(ILocalClock localClock)
+    {
+        _localClock = localClock;
+    }
+
     /// <inheritdoc />
     public event EventHandler<UiNotificationModel>? NotificationReceived;
 
@@ -38,7 +50,7 @@ public sealed class ToastNotificationService : IToastNotificationService
             Title = title,
             Message = message,
             IsError = isError,
-            OccurredTimeLocal = DateTime.Now
+            OccurredTimeLocal = _localClock.Now
         });
     }
 }
