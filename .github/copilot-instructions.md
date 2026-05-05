@@ -41,11 +41,13 @@
       1. 如果接口会被多个项目共享，必须放入 `Contracts/Abstractions`
       2. 如果接口只服务于 Avalonia UI 层，并且依赖 UI 概念、页面、弹窗、导航、UI 线程、通知展示，则允许放在 `Avalonia/Services`
       3. 如果接口当前仅被 Avalonia 使用，但未来可能跨层共享，仍应优先放入 `Contracts/Abstractions`
-      4. Domain 禁止引用 Avalonia
-      5. Application 禁止引用 Avalonia
-      6. Infrastructure 禁止引用 Avalonia
-      7. Contracts 禁止引用 Avalonia
-    - UI 私有接口不得迁移到 Contracts，跨层业务接口不得放在 Avalonia
+    - 禁止事项：
+      1. Domain 禁止引用 Avalonia
+      2. Application 禁止引用 Avalonia
+      3. Infrastructure 禁止引用 Avalonia
+      4. Contracts 禁止引用 Avalonia
+      5. UI 私有接口不得迁移到 Contracts
+      6. 跨层业务接口不得放在 Avalonia
 36. 所有静态工具类都必须定义在 `Zeye.RfidReader.Workbench.Contracts.Utilities` 目录或其子目录下面（强制，框架扩展入口类除外）。
 37. 禁止在热路径读写配置文件和数据库
 38. 每个配置项的注释都需要写明可填写的范围，枚举类型需要列出所有枚举项

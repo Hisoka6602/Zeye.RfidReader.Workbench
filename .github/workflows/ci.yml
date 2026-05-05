@@ -127,20 +127,14 @@ jobs:
 
           $contractsFiles = Get-ChildItem -Path (Join-Path $repoRoot "src/Zeye.RfidReader.Workbench.Contracts") -Recurse -Include *.cs |
             Where-Object { $_.FullName -notmatch '\\(obj|bin)\\' }
-          $forbiddenUiPrivateInterfaces = @(
-            "IAppNavigationService",
-            "IDialogService",
-            "IToastNotificationService",
-            "IUiDispatcher"
-          )
+          $forbiddenUiPrivateInterfacePattern = 'interface\s+(IAppNavigationService|IDialogService|IToastNotificationService|IUiDispatcher)\b'
 
           foreach ($file in $contractsFiles) {
             $content = Get-Content $file.FullName -Raw
 
-            foreach ($forbiddenInterface in $forbiddenUiPrivateInterfaces) {
-              if ($content -match ('interface\s+' + [regex]::Escape($forbiddenInterface))) {
-                throw "$forbiddenInterface 是 UI 私有接口，禁止放入 Contracts：$($file.FullName)"
-              }
+            if ($content -match $forbiddenUiPrivateInterfacePattern) {
+              $matchedInterface = $Matches[1]
+              throw "$matchedInterface 是 UI 私有接口，禁止放入 Contracts：$($file.FullName)"
             }
           }
 
@@ -159,10 +153,11 @@ jobs:
             }
           }
 
+          $avaloniaProjectPathPattern = 'Zeye\.RfidReader\.Workbench\.Avalonia\\'
           $nonAvaloniaSourceFiles = Get-ChildItem -Path (Join-Path $repoRoot "src") -Recurse -Include *.cs |
             Where-Object {
               $_.FullName -notmatch '\\(obj|bin)\\' -and
-              $_.FullName -notmatch 'Zeye\.RfidReader\.Workbench\.Avalonia'
+              $_.FullName -notmatch $avaloniaProjectPathPattern
             }
 
           foreach ($file in $nonAvaloniaSourceFiles) {
