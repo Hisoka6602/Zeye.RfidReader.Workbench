@@ -126,7 +126,7 @@ jobs:
 
             foreach ($file in $avaloniaServiceFiles) {
               $content = Get-Content $file.FullName -Raw
-              if ($content -match ('interface\s+' + [regex]::Escape($requiredInterface) + '\b')) {
+              if ($content -match ('interface\s+' + [regex]::Escape($requiredInterface) + '(?!\w)')) {
                 $interfaceFound = $true
                 break
               }
@@ -167,19 +167,19 @@ jobs:
 
           $avaloniaProjectPathPattern = 'Zeye\.RfidReader\.Workbench\.Avalonia\\'
           $avaloniaTestsProjectPathPattern = 'Zeye\.RfidReader\.Workbench\.Avalonia\.Tests\\'
-          $nonAvaloniaCodeFiles = Get-ChildItem -Path @((Join-Path $repoRoot "src"), (Join-Path $repoRoot "tests")) -Recurse -Include *.cs |
+          $nonAvaloniaProjectFiles = Get-ChildItem -Path @((Join-Path $repoRoot "src"), (Join-Path $repoRoot "tests")) -Recurse -Include *.cs |
             Where-Object {
               $_.FullName -notmatch '\\(obj|bin)\\' -and
               $_.FullName -notmatch $avaloniaProjectPathPattern -and
               $_.FullName -notmatch $avaloniaTestsProjectPathPattern
             }
-          $forbiddenAvaloniaNamespacePattern = 'Zeye\.RfidReader\.Workbench\.Avalonia\.(Services|ViewModels|Views)\b'
+          $forbiddenAvaloniaNamespacePattern = '(?<![\w.])Zeye\.RfidReader\.Workbench\.Avalonia\.(Services|ViewModels|Views)\b'
 
-          foreach ($file in $nonAvaloniaCodeFiles) {
+          foreach ($file in $nonAvaloniaProjectFiles) {
             $content = Get-Content $file.FullName -Raw
 
             if ($content -match $forbiddenAvaloniaNamespacePattern) {
-              throw "非 Avalonia 项目禁止引用 Zeye.RfidReader.Workbench.Avalonia.Services / ViewModels / Views：$($file.FullName)"
+              throw "非 Avalonia 项目禁止引用 $($Matches[0])：$($file.FullName)"
             }
           }
 
