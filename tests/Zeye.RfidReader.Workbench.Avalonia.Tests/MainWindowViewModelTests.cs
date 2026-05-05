@@ -1,4 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
+using Zeye.RfidReader.Workbench.Avalonia.Services;
 using Zeye.RfidReader.Workbench.Avalonia.ViewModels;
 
 namespace Zeye.RfidReader.Workbench.Avalonia.Tests;
@@ -9,12 +11,39 @@ namespace Zeye.RfidReader.Workbench.Avalonia.Tests;
 public sealed class MainWindowViewModelTests
 {
     /// <summary>
+    /// 默认导航应定位到仪表盘。
+    /// </summary>
+    [Fact]
+    public void Constructor_ShouldNavigateToDashboardByDefault()
+    {
+        using var serviceProvider = TestServiceProviderFactory.Create();
+        var viewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
+
+        Assert.IsType<DashboardViewModel>(viewModel.CurrentViewModel);
+    }
+
+    /// <summary>
+    /// 导航命令应切换到读码器监控页面。
+    /// </summary>
+    [Fact]
+    public void NavigateCommand_ShouldSwitchToReaderMonitor()
+    {
+        using var serviceProvider = TestServiceProviderFactory.Create();
+        var viewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
+
+        viewModel.NavigateCommand.Execute(PageKeys.ReaderMonitor);
+
+        Assert.IsType<ReaderMonitorViewModel>(viewModel.CurrentViewModel);
+    }
+
+    /// <summary>
     /// 启动命令可以更新运行状态。
     /// </summary>
     [Fact]
     public async Task StartReadingCommand_ShouldUpdateRunningState()
     {
-        var viewModel = new MainWindowViewModel();
+        using var serviceProvider = TestServiceProviderFactory.Create();
+        var viewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
 
         await viewModel.StartReadingCommand.ExecuteAsync(null);
 
@@ -28,7 +57,8 @@ public sealed class MainWindowViewModelTests
     [Fact]
     public async Task StopReadingCommand_ShouldUpdateRunningState()
     {
-        var viewModel = new MainWindowViewModel();
+        using var serviceProvider = TestServiceProviderFactory.Create();
+        var viewModel = serviceProvider.GetRequiredService<MainWindowViewModel>();
         await viewModel.StartReadingCommand.ExecuteAsync(null);
 
         await viewModel.StopReadingCommand.ExecuteAsync(null);
