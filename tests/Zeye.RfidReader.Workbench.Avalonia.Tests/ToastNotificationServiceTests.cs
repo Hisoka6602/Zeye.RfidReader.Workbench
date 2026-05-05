@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Zeye.RfidReader.Workbench.Avalonia.Models;
 using Zeye.RfidReader.Workbench.Avalonia.Services;
+using Zeye.RfidReader.Workbench.Contracts.Abstractions.Time;
 
 namespace Zeye.RfidReader.Workbench.Avalonia.Tests;
 
@@ -18,12 +19,13 @@ public sealed class ToastNotificationServiceTests
     {
         using var serviceProvider = TestServiceProviderFactory.Create();
         var service = serviceProvider.GetRequiredService<IToastNotificationService>();
-        var startTime = DateTime.Now.AddSeconds(-1);
+        var localClock = serviceProvider.GetRequiredService<ILocalClock>();
+        var startTime = localClock.Now.AddSeconds(-1);
         UiNotificationModel? notification = null;
 
         service.NotificationReceived += OnNotificationReceived;
         service.ShowInfo("提示", "UI 底座已准备完成");
-        var endTime = DateTime.Now.AddSeconds(1);
+        var endTime = localClock.Now.AddSeconds(1);
 
         Assert.NotNull(notification);
         Assert.Equal("提示", notification!.Title);
