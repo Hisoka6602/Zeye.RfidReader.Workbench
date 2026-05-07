@@ -1,27 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\Zeye.RfidReader.Workbench.Application\Zeye.RfidReader.Workbench.Application.csproj" />
-    <ProjectReference Include="..\Zeye.RfidReader.Workbench.Infrastructure\Zeye.RfidReader.Workbench.Infrastructure.csproj" />
-    <ProjectReference Include="..\Zeye.RfidReader.Workbench.Contracts\Zeye.RfidReader.Workbench.Contracts.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Zeye.RfidReader.Workbench.Application\Zeye.RfidReader.Workbench.Application.csproj" />
+		<ProjectReference Include="..\Zeye.RfidReader.Workbench.Infrastructure\Zeye.RfidReader.Workbench.Infrastructure.csproj" />
+		<ProjectReference Include="..\Zeye.RfidReader.Workbench.Contracts\Zeye.RfidReader.Workbench.Contracts.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="12.0.2" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.2" />
-    <PackageReference Include="Avalonia.Labs.Lottie" Version="12.0.2" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Avalonia.Desktop" Version="12.0.2" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.2" />
+		<PackageReference Include="Avalonia.Labs.Lottie" Version="12.0.2" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <AvaloniaResource Include="Assets\**\*" />
-  </ItemGroup>
+	<ItemGroup>
+		<AvaloniaResource Include="Assets\**\*" />
+	</ItemGroup>
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
 </Project>
